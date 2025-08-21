@@ -249,16 +249,16 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
     switch (currentStep) {
       case 1:
         return (
-          <div className="min-h-screen flex items-center justify-center px-8">
-            <div className="w-full max-w-7xl mx-auto">
-              <div className="text-center mb-16">
+          <div className="min-h-screen flex items-center justify-center px-4">
+            <div className="w-full max-w-[1400px] mx-auto">
+              <div className="text-center mb-20">
                 <h1 className="text-4xl font-bold text-foreground mb-6">Choisissez votre profil</h1>
                 <p className="text-lg text-muted-foreground">Quelle catégorie vous correspond ?</p>
               </div>
               
-              <div className="grid grid-cols-2 gap-16 max-w-5xl mx-auto">
+              <div className="grid grid-cols-2 gap-24 w-full">
                 <button
-                  className={`group relative bg-white p-8 rounded-2xl shadow-lg border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+                  className={`group relative bg-white p-12 rounded-2xl shadow-lg border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
                     userCategory === 'b2c' 
                       ? 'border-primary shadow-primary/10' 
                       : 'border-border hover:border-primary/30'
@@ -269,11 +269,11 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
                   }}
                 >
                   <div className="text-center">
-                    <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-                      <User className="h-10 w-10 text-primary" />
+                    <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-primary/10 flex items-center justify-center">
+                      <User className="h-12 w-12 text-primary" />
                     </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-4">PARTICULIER</h3>
-                    <p className="text-muted-foreground mb-8 leading-relaxed">
+                    <h3 className="text-3xl font-bold text-foreground mb-6">PARTICULIER</h3>
+                    <p className="text-muted-foreground mb-10 leading-relaxed text-lg">
                       Parents<br/>
                       et<br/>
                       familles<br/>
@@ -283,15 +283,15 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
                       billets<br/>
                       individuellement
                     </p>
-                    <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold">
-                      <Check className="h-4 w-4 mr-2" />
+                    <div className="inline-flex items-center px-6 py-3 rounded-full bg-primary/10 text-primary text-base font-semibold">
+                      <Check className="h-5 w-5 mr-2" />
                       Accès immédiat
                     </div>
                   </div>
                 </button>
 
                 <button
-                  className={`group relative bg-white p-8 rounded-2xl shadow-lg border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+                  className={`group relative bg-white p-12 rounded-2xl shadow-lg border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
                     userCategory === 'b2b' 
                       ? 'border-primary shadow-primary/10' 
                       : 'border-border hover:border-primary/30'
@@ -299,18 +299,18 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
                   onClick={() => setUserCategory('b2b')}
                 >
                   <div className="text-center">
-                    <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
-                      <Building2 className="h-10 w-10 text-primary" />
+                    <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Building2 className="h-12 w-12 text-primary" />
                     </div>
-                    <h3 className="text-2xl font-bold text-foreground mb-4">PROFESSIONNEL</h3>
-                    <p className="text-muted-foreground mb-8 leading-relaxed">
+                    <h3 className="text-3xl font-bold text-foreground mb-6">PROFESSIONNEL</h3>
+                    <p className="text-muted-foreground mb-10 leading-relaxed text-lg">
                       Enseignants,<br/>
                       associations<br/>
                       et<br/>
                       organismes<br/>
                       éducatifs
                     </p>
-                    <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-sm font-semibold">
+                    <div className="inline-flex items-center px-6 py-3 rounded-full bg-blue-50 text-blue-700 text-base font-semibold">
                       Tarifs préférentiels
                     </div>
                   </div>
