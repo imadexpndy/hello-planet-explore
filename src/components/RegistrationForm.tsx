@@ -363,7 +363,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
         <p className="text-muted-foreground text-lg">Sélectionnez votre type d'organisation</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
           {
             type: 'teacher_private',
@@ -422,33 +422,9 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
             </CardContent>
           </Card>
         ))}
-
-        <Card className="cursor-not-allowed opacity-50 animate-fade-in" style={{ animationDelay: '300ms' }}>
-          <CardContent className="p-8 text-center relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-muted/10 to-transparent rounded-full transform translate-x-12 -translate-y-12" />
-            
-            <div className="relative z-10">
-              <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-muted to-muted/80 rounded-xl flex items-center justify-center shadow-lg">
-                <Building2 className="h-8 w-8 text-muted-foreground" />
-              </div>
-              
-              <h3 className="text-xl font-bold mb-3 text-muted-foreground">Partenaire</h3>
-              <p className="text-muted-foreground leading-relaxed">
-                Créé par l'administration
-              </p>
-            </div>
-          </CardContent>
-        </Card>
       </div>
 
-      <Alert className="animate-fade-in" style={{ animationDelay: '400ms' }}>
-        <AlertDescription className="text-center">
-          <strong>💡 Note:</strong> Les comptes partenaires sont créés uniquement par l'administration. 
-          Contactez l'équipe support pour devenir partenaire.
-        </AlertDescription>
-      </Alert>
-
-      <div className="flex justify-between pt-6 animate-fade-in" style={{ animationDelay: '500ms' }}>
+      <div className="flex justify-between pt-6 animate-fade-in" style={{ animationDelay: '300ms' }}>
         <Button variant="outline" onClick={() => {
           setIsTransitioning(true);
           setTimeout(() => {
