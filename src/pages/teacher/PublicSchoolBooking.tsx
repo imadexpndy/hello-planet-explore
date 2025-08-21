@@ -164,7 +164,7 @@ export default function PublicSchoolBooking() {
       await supabase
         .from('bookings')
         .update({ 
-          status: 'awaiting_verification',
+          status: 'awaiting_verification' as const,
           students_count: studentNum,
           accompanists_count: parseInt(accompanistCount || '0')
         })
