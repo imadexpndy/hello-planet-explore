@@ -153,16 +153,16 @@ const Auth = () => {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-br from-primary-glow/10 to-transparent rounded-full blur-2xl animate-pulse" style={{ animationDelay: '4s' }} />
       </div>
       
-      {/* Logo at the top */}
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20">
+      {/* Logo at the top - better positioning */}
+      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-20">
         <img 
           src="/lovable-uploads/b82bf764-c505-4dd6-960c-99a6acf57b3e.png" 
           alt="L'École du Jeune Spectateur" 
-          className="h-16 w-auto drop-shadow-lg"
+          className="h-12 w-auto drop-shadow-lg"
         />
       </div>
       
-      <div className={`w-full relative z-10 ${mode === 'register' ? 'max-w-none' : 'max-w-md'} ${mode === 'login' ? 'mt-20' : ''}`}>
+      <div className={`w-full relative z-10 ${mode === 'register' ? 'max-w-none' : 'max-w-md'} ${mode === 'login' ? 'mt-16' : ''}`}>
         {mode === 'login' && (
           <Card className="backdrop-blur-xl bg-primary/8 border-primary/30 shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary/12 rounded-xl pointer-events-none" />

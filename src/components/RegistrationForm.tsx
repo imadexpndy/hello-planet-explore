@@ -843,14 +843,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
         <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-gradient-to-br from-primary/4 to-transparent rounded-full blur-2xl animate-pulse" style={{ animationDelay: '6s' }} />
       </div>
       
-      {/* Logo at the top */}
-      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-30">
-        <img 
-          src="/lovable-uploads/b82bf764-c505-4dd6-960c-99a6acf57b3e.png" 
-          alt="L'École du Jeune Spectateur" 
-          className="h-20 w-auto drop-shadow-lg"
-        />
-      </div>
       
       {/* Stylized back button */}
       <div className="absolute top-6 left-6 z-20">
