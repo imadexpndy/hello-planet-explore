@@ -512,7 +512,14 @@ export type Database = {
       }
     }
     Enums: {
-      booking_status: "pending" | "confirmed" | "cancelled" | "completed"
+      booking_status:
+        | "pending"
+        | "confirmed"
+        | "cancelled"
+        | "completed"
+        | "awaiting_verification"
+        | "approved"
+        | "rejected"
       communication_status: "pending" | "sent" | "delivered" | "failed"
       communication_type: "email" | "whatsapp" | "sms"
       organization_type:
@@ -656,7 +663,15 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      booking_status: ["pending", "confirmed", "cancelled", "completed"],
+      booking_status: [
+        "pending",
+        "confirmed",
+        "cancelled",
+        "completed",
+        "awaiting_verification",
+        "approved",
+        "rejected",
+      ],
       communication_status: ["pending", "sent", "delivered", "failed"],
       communication_type: ["email", "whatsapp", "sms"],
       organization_type: [

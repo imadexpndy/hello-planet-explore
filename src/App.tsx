@@ -13,10 +13,15 @@ import AdminDashboard from "./pages/dashboards/AdminDashboard";
 import AdminSpectacles from "./pages/admin/AdminSpectacles";
 import AdminSessions from "./pages/admin/AdminSessions";
 import PrivateSchoolBooking from "./pages/teacher/PrivateSchoolBooking";
+import PublicSchoolBooking from "./pages/teacher/PublicSchoolBooking";
 import TeacherDashboard from "./pages/dashboards/TeacherDashboard";
 import AssociationDashboard from "./pages/dashboards/AssociationDashboard";
+import AssociationBooking from "./pages/association/AssociationBooking";
 import PartnerDashboard from "./pages/dashboards/PartnerDashboard";
+import PartnerTicketAllocation from "./pages/partner/PartnerTicketAllocation";
 import B2CDashboard from "./pages/dashboards/B2CDashboard";
+import B2CBooking from "./pages/b2c/B2CBooking";
+import AdminBookings from "./pages/admin/AdminBookings";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import { healthCheck } from "./pages/api/health";
@@ -106,6 +111,14 @@ const App = () => {
                   </ProtectedRoute>
                 } 
               />
+              <Route 
+                path="/teacher/public-booking" 
+                element={
+                  <ProtectedRoute requiredRole="teacher_public">
+                    <PublicSchoolBooking />
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Protected Association Routes */}
               <Route 
@@ -113,6 +126,14 @@ const App = () => {
                 element={
                   <ProtectedRoute requiredRole="association">
                     <AssociationDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/association/new-booking" 
+                element={
+                  <ProtectedRoute requiredRole="association">
+                    <AssociationBooking />
                   </ProtectedRoute>
                 } 
               />
@@ -126,6 +147,14 @@ const App = () => {
                   </ProtectedRoute>
                 } 
               />
+              <Route 
+                path="/partner/allocate-tickets" 
+                element={
+                  <ProtectedRoute requiredRole="partner">
+                    <PartnerTicketAllocation />
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Protected B2C Routes */}
               <Route 
@@ -133,6 +162,24 @@ const App = () => {
                 element={
                   <ProtectedRoute requiredRole="b2c_user">
                     <B2CDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/b2c/booking" 
+                element={
+                  <ProtectedRoute requiredRole="b2c_user">
+                    <B2CBooking />
+                  </ProtectedRoute>
+                } 
+              />
+              
+              {/* Protected Admin Booking Routes */}
+              <Route 
+                path="/admin/bookings" 
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminBookings />
                   </ProtectedRoute>
                 } 
               />
