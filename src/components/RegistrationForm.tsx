@@ -249,48 +249,73 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
     switch (currentStep) {
       case 1:
         return (
-          <div className="w-full max-w-6xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-5xl font-bold text-foreground mb-4">Choisissez votre profil</h1>
-              <p className="text-2xl text-muted-foreground">Quelle catégorie vous correspond ?</p>
-            </div>
-            
-            <div className="grid grid-cols-2 gap-12">
-              <button
-                className={`p-12 rounded-3xl border-2 transition-all duration-300 hover:scale-[1.02] ${
-                  userCategory === 'b2c' 
-                    ? 'border-primary bg-primary/10 shadow-2xl' 
-                    : 'border-gray-200 hover:border-primary/50 hover:shadow-lg'
-                }`}
-                onClick={() => {
-                  setUserCategory('b2c');
-                  setUserType('b2c');
-                }}
-              >
-                <User className="h-24 w-24 mx-auto mb-6 text-primary" />
-                <h3 className="text-3xl font-bold mb-4">Particulier</h3>
-                <p className="text-lg text-muted-foreground mb-6">Parents et familles souhaitant acheter des billets individuellement</p>
-                <div className="inline-flex items-center px-6 py-3 rounded-full bg-green-100 text-green-700 text-lg font-semibold">
-                  <Check className="h-5 w-5 mr-2" />
-                  Accès immédiat
-                </div>
-              </button>
+          <div className="min-h-screen flex items-center justify-center px-8">
+            <div className="w-full max-w-7xl mx-auto">
+              <div className="text-center mb-16">
+                <h1 className="text-4xl font-bold text-foreground mb-6">Choisissez votre profil</h1>
+                <p className="text-lg text-muted-foreground">Quelle catégorie vous correspond ?</p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-16 max-w-5xl mx-auto">
+                <button
+                  className={`group relative bg-white p-8 rounded-2xl shadow-lg border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+                    userCategory === 'b2c' 
+                      ? 'border-primary shadow-primary/10' 
+                      : 'border-border hover:border-primary/30'
+                  }`}
+                  onClick={() => {
+                    setUserCategory('b2c');
+                    setUserType('b2c');
+                  }}
+                >
+                  <div className="text-center">
+                    <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
+                      <User className="h-10 w-10 text-primary" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-foreground mb-4">PARTICULIER</h3>
+                    <p className="text-muted-foreground mb-8 leading-relaxed">
+                      Parents<br/>
+                      et<br/>
+                      familles<br/>
+                      souhaitant<br/>
+                      acheter<br/>
+                      des<br/>
+                      billets<br/>
+                      individuellement
+                    </p>
+                    <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-semibold">
+                      <Check className="h-4 w-4 mr-2" />
+                      Accès immédiat
+                    </div>
+                  </div>
+                </button>
 
-              <button
-                className={`p-12 rounded-3xl border-2 transition-all duration-300 hover:scale-[1.02] ${
-                  userCategory === 'b2b' 
-                    ? 'border-primary bg-primary/10 shadow-2xl' 
-                    : 'border-gray-200 hover:border-primary/50 hover:shadow-lg'
-                }`}
-                onClick={() => setUserCategory('b2b')}
-              >
-                <Building2 className="h-24 w-24 mx-auto mb-6 text-primary" />
-                <h3 className="text-3xl font-bold mb-4">Professionnel</h3>
-                <p className="text-lg text-muted-foreground mb-6">Enseignants, associations et organismes éducatifs</p>
-                <div className="inline-flex items-center px-6 py-3 rounded-full bg-blue-100 text-blue-700 text-lg font-semibold">
-                  Tarifs préférentiels
-                </div>
-              </button>
+                <button
+                  className={`group relative bg-white p-8 rounded-2xl shadow-lg border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
+                    userCategory === 'b2b' 
+                      ? 'border-primary shadow-primary/10' 
+                      : 'border-border hover:border-primary/30'
+                  }`}
+                  onClick={() => setUserCategory('b2b')}
+                >
+                  <div className="text-center">
+                    <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary/10 flex items-center justify-center">
+                      <Building2 className="h-10 w-10 text-primary" />
+                    </div>
+                    <h3 className="text-2xl font-bold text-foreground mb-4">PROFESSIONNEL</h3>
+                    <p className="text-muted-foreground mb-8 leading-relaxed">
+                      Enseignants,<br/>
+                      associations<br/>
+                      et<br/>
+                      organismes<br/>
+                      éducatifs
+                    </p>
+                    <div className="inline-flex items-center px-4 py-2 rounded-full bg-blue-50 text-blue-700 text-sm font-semibold">
+                      Tarifs préférentiels
+                    </div>
+                  </div>
+                </button>
+              </div>
             </div>
           </div>
         );
