@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
-import { ArrowLeft, Upload, Building2, Users, GraduationCap, User } from 'lucide-react';
+import { ArrowLeft, Upload, Building2, Users, GraduationCap, User, CheckCircle, Sparkles } from 'lucide-react';
 
 interface School {
   id: string;
@@ -24,6 +24,7 @@ interface RegistrationFormProps {
 
 export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) => {
   const [step, setStep] = useState(1);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const [userCategory, setUserCategory] = useState<'b2c' | 'b2b' | ''>('');
   const [userType, setUserType] = useState<string>('');
   const [schools, setSchools] = useState<School[]>([]);
@@ -329,176 +330,252 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
           Retour
         </Button>
         <Button 
-          onClick={() => setStep(2)} 
+          onClick={() => {
+            setIsTransitioning(true);
+            setTimeout(() => {
+              setStep(2);
+              setIsTransitioning(false);
+            }, 200);
+          }} 
           disabled={!userCategory}
           className="px-8 py-3 hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Continuer
+          <span className="flex items-center gap-2">
+            Continuer
+            <Sparkles className="h-4 w-4 animate-pulse" />
+          </span>
         </Button>
       </div>
     </div>
   );
 
   const renderUserTypeSelection = () => (
-    <div className="space-y-4">
-      <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold mb-2">Précisez votre profil professionnel</h3>
-        <p className="text-muted-foreground">Sélectionnez votre type d'organisation</p>
+    <div className="space-y-8">
+      <div className="text-center mb-8 animate-fade-in">
+        <h3 className="text-2xl font-semibold mb-3 bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent">
+          Précisez votre profil professionnel
+        </h3>
+        <p className="text-muted-foreground text-lg">Sélectionnez votre type d'organisation</p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card 
-          className={`cursor-pointer transition-colors hover:bg-accent ${userType === 'teacher_private' ? 'ring-2 ring-primary' : ''}`}
-          onClick={() => setUserType('teacher_private')}
-        >
-          <CardContent className="p-6 text-center">
-            <GraduationCap className="h-12 w-12 mx-auto mb-4 text-primary" />
-            <h3 className="font-semibold">École Privée</h3>
-            <p className="text-sm text-muted-foreground mt-2">
-              Vérification par email du domaine
-            </p>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {[
+          {
+            type: 'teacher_private',
+            icon: GraduationCap,
+            title: 'École Privée',
+            description: 'Vérification par email du domaine',
+            color: 'from-primary to-primary/80',
+            delay: '0ms'
+          },
+          {
+            type: 'teacher_public',
+            icon: GraduationCap,
+            title: 'École Publique',
+            description: 'Documents officiels requis',
+            color: 'from-accent to-accent/80',
+            delay: '100ms'
+          },
+          {
+            type: 'association',
+            icon: Users,
+            title: 'Association',
+            description: 'Organisation à but non lucratif',
+            color: 'from-primary to-accent',
+            delay: '200ms'
+          }
+        ].map((option, index) => (
+          <Card 
+            key={option.type}
+            className={`group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 animate-fade-in ${
+              userType === option.type 
+                ? 'ring-2 ring-primary border-primary bg-primary/5' 
+                : 'border-border hover:border-primary/50'
+            }`}
+            style={{ animationDelay: option.delay }}
+            onClick={() => setUserType(option.type)}
+          >
+            <CardContent className="p-8 text-center relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-primary/10 to-transparent rounded-full transform translate-x-12 -translate-y-12" />
+              
+              <div className="relative z-10">
+                <div className={`w-16 h-16 mx-auto mb-6 bg-gradient-to-br ${option.color} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                  <option.icon className="h-8 w-8 text-white" />
+                </div>
+                
+                <h3 className="text-xl font-bold mb-3 text-foreground">{option.title}</h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {option.description}
+                </p>
+                
+                {userType === option.type && (
+                  <div className="mt-4 animate-scale-in">
+                    <CheckCircle className="h-6 w-6 text-primary mx-auto animate-pulse" />
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
 
-        <Card 
-          className={`cursor-pointer transition-colors hover:bg-accent ${userType === 'teacher_public' ? 'ring-2 ring-primary' : ''}`}
-          onClick={() => setUserType('teacher_public')}
-        >
-          <CardContent className="p-6 text-center">
-            <GraduationCap className="h-12 w-12 mx-auto mb-4 text-accent" />
-            <h3 className="font-semibold">École Publique</h3>
-            <p className="text-sm text-muted-foreground mt-2">
-              Documents officiels requis
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card 
-          className={`cursor-pointer transition-colors hover:bg-accent ${userType === 'association' ? 'ring-2 ring-primary' : ''}`}
-          onClick={() => setUserType('association')}
-        >
-          <CardContent className="p-6 text-center">
-            <Users className="h-12 w-12 mx-auto mb-4 text-primary" />
-            <h3 className="font-semibold">Association</h3>
-            <p className="text-sm text-muted-foreground mt-2">
-              Organisation à but non lucratif
-            </p>
-          </CardContent>
-        </Card>
-
-        <Card className="cursor-not-allowed opacity-50">
-          <CardContent className="p-6 text-center">
-            <Building2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="font-semibold text-muted-foreground">Partenaire</h3>
-            <p className="text-sm text-muted-foreground mt-2">
-              Créé par l'administration
-            </p>
+        <Card className="cursor-not-allowed opacity-50 animate-fade-in" style={{ animationDelay: '300ms' }}>
+          <CardContent className="p-8 text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-muted/10 to-transparent rounded-full transform translate-x-12 -translate-y-12" />
+            
+            <div className="relative z-10">
+              <div className="w-16 h-16 mx-auto mb-6 bg-gradient-to-br from-muted to-muted/80 rounded-xl flex items-center justify-center shadow-lg">
+                <Building2 className="h-8 w-8 text-muted-foreground" />
+              </div>
+              
+              <h3 className="text-xl font-bold mb-3 text-muted-foreground">Partenaire</h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Créé par l'administration
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
 
-      <Alert>
-        <AlertDescription>
-          Les comptes partenaires sont créés uniquement par l'administration. 
+      <Alert className="animate-fade-in" style={{ animationDelay: '400ms' }}>
+        <AlertDescription className="text-center">
+          <strong>💡 Note:</strong> Les comptes partenaires sont créés uniquement par l'administration. 
           Contactez l'équipe support pour devenir partenaire.
         </AlertDescription>
       </Alert>
 
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={() => setStep(1)}>
+      <div className="flex justify-between pt-6 animate-fade-in" style={{ animationDelay: '500ms' }}>
+        <Button variant="outline" onClick={() => {
+          setIsTransitioning(true);
+          setTimeout(() => {
+            setStep(1);
+            setIsTransitioning(false);
+          }, 200);
+        }} className="px-8 py-3 hover:scale-105 transition-transform">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
         <Button 
-          onClick={() => setStep(3)} 
+          onClick={() => {
+            setIsTransitioning(true);
+            setTimeout(() => {
+              setStep(3);
+              setIsTransitioning(false);
+            }, 200);
+          }} 
           disabled={!userType}
+          className="px-8 py-3 hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Continuer
+          <span className="flex items-center gap-2">
+            Continuer
+            <Sparkles className="h-4 w-4 animate-pulse" />
+          </span>
         </Button>
       </div>
     </div>
   );
 
   const renderBasicInfo = () => (
-    <div className="space-y-4">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="email">Email *</Label>
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="animate-fade-in" style={{ animationDelay: '0ms' }}>
+          <Label htmlFor="email" className="text-sm font-medium">Email *</Label>
           <Input
             id="email"
             type="email"
             value={formData.email}
             onChange={(e) => setFormData(prev => ({...prev, email: e.target.value}))}
             required
+            className="mt-2 transition-all duration-200 focus:scale-105"
           />
         </div>
-        <div>
-          <Label htmlFor="fullName">Nom complet *</Label>
+        <div className="animate-fade-in" style={{ animationDelay: '100ms' }}>
+          <Label htmlFor="fullName" className="text-sm font-medium">Nom complet *</Label>
           <Input
             id="fullName"
             value={formData.fullName}
             onChange={(e) => setFormData(prev => ({...prev, fullName: e.target.value}))}
             required
+            className="mt-2 transition-all duration-200 focus:scale-105"
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="password">Mot de passe *</Label>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="animate-fade-in" style={{ animationDelay: '200ms' }}>
+          <Label htmlFor="password" className="text-sm font-medium">Mot de passe *</Label>
           <Input
             id="password"
             type="password"
             value={formData.password}
             onChange={(e) => setFormData(prev => ({...prev, password: e.target.value}))}
             required
+            className="mt-2 transition-all duration-200 focus:scale-105"
           />
         </div>
-        <div>
-          <Label htmlFor="confirmPassword">Confirmer le mot de passe *</Label>
+        <div className="animate-fade-in" style={{ animationDelay: '300ms' }}>
+          <Label htmlFor="confirmPassword" className="text-sm font-medium">Confirmer le mot de passe *</Label>
           <Input
             id="confirmPassword"
             type="password"
             value={formData.confirmPassword}
             onChange={(e) => setFormData(prev => ({...prev, confirmPassword: e.target.value}))}
             required
+            className="mt-2 transition-all duration-200 focus:scale-105"
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <Label htmlFor="phone">Téléphone *</Label>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="animate-fade-in" style={{ animationDelay: '400ms' }}>
+          <Label htmlFor="phone" className="text-sm font-medium">Téléphone *</Label>
           <Input
             id="phone"
             type="tel"
             value={formData.phone}
             onChange={(e) => setFormData(prev => ({...prev, phone: e.target.value}))}
             required
+            className="mt-2 transition-all duration-200 focus:scale-105"
           />
         </div>
-        <div>
-          <Label htmlFor="whatsapp">WhatsApp (optionnel)</Label>
+        <div className="animate-fade-in" style={{ animationDelay: '500ms' }}>
+          <Label htmlFor="whatsapp" className="text-sm font-medium">WhatsApp (optionnel)</Label>
           <Input
             id="whatsapp"
             type="tel"
             value={formData.whatsapp}
             onChange={(e) => setFormData(prev => ({...prev, whatsapp: e.target.value}))}
             placeholder="Par défaut: même que téléphone"
+            className="mt-2 transition-all duration-200 focus:scale-105"
           />
         </div>
       </div>
 
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={() => userCategory === 'b2c' ? setStep(1) : setStep(2)}>
+      <div className="flex justify-between pt-6 animate-fade-in" style={{ animationDelay: '600ms' }}>
+        <Button variant="outline" onClick={() => {
+          setIsTransitioning(true);
+          setTimeout(() => {
+            setStep(userCategory === 'b2c' ? 1 : 2);
+            setIsTransitioning(false);
+          }, 200);
+        }} className="px-8 py-3 hover:scale-105 transition-transform">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
         <Button 
-          onClick={() => setStep(userCategory === 'b2c' ? 3 : 4)}
+          onClick={() => {
+            setIsTransitioning(true);
+            setTimeout(() => {
+              setStep(userCategory === 'b2c' ? 3 : 4);
+              setIsTransitioning(false);
+            }, 200);
+          }}
           disabled={!formData.email || !formData.fullName || !formData.password || !formData.phone}
+          className="px-8 py-3 hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Continuer
+          <span className="flex items-center gap-2">
+            Continuer
+            <Sparkles className="h-4 w-4 animate-pulse" />
+          </span>
         </Button>
       </div>
     </div>
@@ -813,13 +890,45 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
         </CardHeader>
         
         <CardContent className="relative px-16 pb-12">
-          <div className="animate-fade-in">
-            {step === 1 && renderCategorySelection()}
-            {step === 2 && userCategory === 'b2b' && renderUserTypeSelection()}
-            {step === 2 && userCategory === 'b2c' && renderBasicInfo()}
-            {step === 3 && userCategory === 'b2b' && renderBasicInfo()}
-            {step === 3 && userCategory === 'b2c' && renderSpecificInfo()}
-            {step === 4 && renderSpecificInfo()}
+          <div 
+            className={`transition-all duration-500 ease-in-out transform ${
+              isTransitioning 
+                ? 'opacity-0 translate-x-8 scale-95' 
+                : 'opacity-100 translate-x-0 scale-100'
+            }`}
+          >
+            <div className="animate-fade-in">
+              {step === 1 && (
+                <div className="animate-scale-in">
+                  {renderCategorySelection()}
+                </div>
+              )}
+              {step === 2 && userCategory === 'b2b' && (
+                <div className="animate-slide-in-right">
+                  {renderUserTypeSelection()}
+                </div>
+              )}
+              {step === 2 && userCategory === 'b2c' && (
+                <div className="animate-slide-in-right">
+                  {renderBasicInfo()}
+                </div>
+              )}
+              {step === 3 && userCategory === 'b2b' && (
+                <div className="animate-slide-in-right">
+                  {renderBasicInfo()}
+                </div>
+              )}
+              {step === 3 && userCategory === 'b2c' && (
+                <div className="animate-slide-in-right">
+                  {renderSpecificInfo()}
+                </div>
+              )}
+              {step === 4 && (
+                <div className="animate-slide-in-right">
+                  {renderSpecificInfo()}
+                </div>
+              )}
+            </div>
           </div>
         </CardContent>
       </Card>
