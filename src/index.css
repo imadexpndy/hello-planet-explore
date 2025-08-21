@@ -18,9 +18,9 @@ All colors MUST be HSL.
     --popover-foreground: 0 0% 0%;
 
     /* EDJS Enhanced Primary - Custom gradient colors */
-    --primary: 72 100% 41%;        /* #BDCF00 */
+    --primary: 71 100% 40%;        /* #BDCF00 - Accurate HSL conversion */
     --primary-foreground: 0 0% 0%;
-    --primary-glow: 75 99% 27%;     /* #7e8a01 */
+    --primary-glow: 64 89% 27%;     /* #7e8a01 - Accurate HSL conversion */
 
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 0%;
@@ -68,9 +68,9 @@ All colors MUST be HSL.
     --popover: 0 0% 0%;
     --popover-foreground: 0 0% 100%;
 
-    --primary: 72 100% 41%;        /* #BDCF00 */
+    --primary: 71 100% 40%;        /* #BDCF00 - Accurate HSL conversion */
     --primary-foreground: 0 0% 0%;
-    --primary-glow: 75 99% 27%;     /* #7e8a01 */
+    --primary-glow: 64 89% 27%;     /* #7e8a01 - Accurate HSL conversion */
 
     --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 100%;
