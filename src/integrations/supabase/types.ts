@@ -190,6 +190,41 @@ export type Database = {
           },
         ]
       }
+      documents: {
+        Row: {
+          booking_id: string
+          created_at: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name: string
+          file_url: string
+          id: string
+        }
+        Insert: {
+          booking_id: string
+          created_at?: string
+          document_type: Database["public"]["Enums"]["document_type"]
+          file_name: string
+          file_url: string
+          id?: string
+        }
+        Update: {
+          booking_id?: string
+          created_at?: string
+          document_type?: Database["public"]["Enums"]["document_type"]
+          file_name?: string
+          file_url?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "documents_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organizations: {
         Row: {
           address: string | null
@@ -275,8 +310,10 @@ export type Database = {
       }
       profiles: {
         Row: {
+          consent_date: string | null
           created_at: string
           email: string
+          email_consent: boolean | null
           first_name: string | null
           id: string
           is_verified: boolean | null
@@ -284,14 +321,19 @@ export type Database = {
           name: string | null
           organization_id: string | null
           phone: string | null
+          privacy_accepted: boolean | null
           role: Database["public"]["Enums"]["user_role"]
+          terms_accepted: boolean | null
           updated_at: string
           user_id: string
           whatsapp: string | null
+          whatsapp_consent: boolean | null
         }
         Insert: {
+          consent_date?: string | null
           created_at?: string
           email: string
+          email_consent?: boolean | null
           first_name?: string | null
           id?: string
           is_verified?: boolean | null
@@ -299,14 +341,19 @@ export type Database = {
           name?: string | null
           organization_id?: string | null
           phone?: string | null
+          privacy_accepted?: boolean | null
           role?: Database["public"]["Enums"]["user_role"]
+          terms_accepted?: boolean | null
           updated_at?: string
           user_id: string
           whatsapp?: string | null
+          whatsapp_consent?: boolean | null
         }
         Update: {
+          consent_date?: string | null
           created_at?: string
           email?: string
+          email_consent?: boolean | null
           first_name?: string | null
           id?: string
           is_verified?: boolean | null
@@ -314,10 +361,13 @@ export type Database = {
           name?: string | null
           organization_id?: string | null
           phone?: string | null
+          privacy_accepted?: boolean | null
           role?: Database["public"]["Enums"]["user_role"]
+          terms_accepted?: boolean | null
           updated_at?: string
           user_id?: string
           whatsapp?: string | null
+          whatsapp_consent?: boolean | null
         }
         Relationships: [
           {
@@ -522,6 +572,7 @@ export type Database = {
         | "rejected"
       communication_status: "pending" | "sent" | "delivered" | "failed"
       communication_type: "email" | "whatsapp" | "sms"
+      document_type: "devis" | "invoice" | "ticket"
       organization_type:
         | "private_school"
         | "public_school"
@@ -674,6 +725,7 @@ export const Constants = {
       ],
       communication_status: ["pending", "sent", "delivered", "failed"],
       communication_type: ["email", "whatsapp", "sms"],
+      document_type: ["devis", "invoice", "ticket"],
       organization_type: [
         "private_school",
         "public_school",

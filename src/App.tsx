@@ -24,6 +24,8 @@ import B2CBooking from "./pages/b2c/B2CBooking";
 import AdminBookings from "./pages/admin/AdminBookings";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import { Privacy } from "./pages/Privacy";
+import { Terms } from "./pages/Terms";
 import { healthCheck } from "./pages/api/health";
 
 const queryClient = new QueryClient();
@@ -58,6 +60,8 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
               <Route 
                 path="/profile" 
