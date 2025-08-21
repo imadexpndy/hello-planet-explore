@@ -13,7 +13,7 @@ interface Profile {
   name: string | null;
   phone: string | null;
   whatsapp: string | null;
-  role: 'admin' | 'teacher_private' | 'teacher_public' | 'association' | 'partner' | 'b2c_user';
+  role: 'admin' | 'teacher_private' | 'teacher_public' | 'association' | 'partner' | 'b2c_user' | 'super_admin';
   organization_id: string | null;
   is_verified: boolean;
 }
