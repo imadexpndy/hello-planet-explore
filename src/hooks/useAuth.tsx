@@ -23,6 +23,7 @@ interface Profile {
   city: string | null;
   school_id: string | null;
   association_id: string | null;
+  contact_person: string | null;
 }
 
 interface AuthContextType {
