@@ -746,22 +746,55 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
     }
   };
 
+  const maxSteps = userCategory === 'b2c' ? 3 : 4;
+  const progress = (step / maxSteps) * 100;
+
   return (
-    <Card className="max-w-2xl mx-auto">
-      <CardHeader>
-        <CardTitle>{getStepTitle()}</CardTitle>
-        <CardDescription>
-          Étape {step} sur {userCategory === 'b2c' ? 3 : 4}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        {step === 1 && renderCategorySelection()}
-        {step === 2 && userCategory === 'b2b' && renderUserTypeSelection()}
-        {step === 2 && userCategory === 'b2c' && renderBasicInfo()}
-        {step === 3 && userCategory === 'b2b' && renderBasicInfo()}
-        {step === 3 && userCategory === 'b2c' && renderSpecificInfo()}
-        {step === 4 && renderSpecificInfo()}
-      </CardContent>
-    </Card>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/20 flex items-center justify-center p-4">
+      <div className="w-full max-w-4xl">
+        {/* Progress bar */}
+        <div className="mb-8">
+          <div className="flex justify-between items-center mb-2">
+            <span className="text-sm text-muted-foreground">Étape {step} sur {maxSteps}</span>
+            <span className="text-sm text-muted-foreground">{Math.round(progress)}%</span>
+          </div>
+          <div className="w-full bg-muted rounded-full h-2">
+            <div 
+              className="bg-primary h-2 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Main card */}
+        <Card className="w-full border-0 shadow-xl bg-card/95 backdrop-blur">
+          <CardHeader className="text-center pb-8">
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+              {getStepTitle()}
+            </CardTitle>
+            <CardDescription className="text-lg mt-2">
+              {step === 1 && "Commençons par identifier votre profil"}
+              {step === 2 && userCategory === 'b2b' && "Précisez votre type d'organisation"}
+              {step === 2 && userCategory === 'b2c' && "Vos informations personnelles"}
+              {step === 3 && userCategory === 'b2b' && "Vos informations personnelles"}
+              {step === 3 && userCategory === 'b2c' && "Finalisez votre inscription"}
+              {step === 4 && "Informations spécifiques à votre organisation"}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="px-8 pb-8">
+            <div className="min-h-[400px] flex flex-col justify-between">
+              <div className="flex-1">
+                {step === 1 && renderCategorySelection()}
+                {step === 2 && userCategory === 'b2b' && renderUserTypeSelection()}
+                {step === 2 && userCategory === 'b2c' && renderBasicInfo()}
+                {step === 3 && userCategory === 'b2b' && renderBasicInfo()}
+                {step === 3 && userCategory === 'b2c' && renderSpecificInfo()}
+                {step === 4 && renderSpecificInfo()}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 };
