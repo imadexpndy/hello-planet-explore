@@ -135,14 +135,20 @@ const Auth = () => {
   };
 
   const createAdmin = async () => {
+    console.log('Creating admin with:', { email, setupToken: setupToken ? 'PROVIDED' : 'MISSING', adminFullName });
     setLoading(true);
     try {
-      const { error } = await supabase.functions.invoke('create-admin', {
+      const { data, error } = await supabase.functions.invoke('create-admin', {
         body: { email, password, full_name: adminFullName },
         headers: { 'x-admin-setup-token': setupToken },
       } as any);
 
-      if (error) throw error;
+      console.log('Admin creation response:', { data, error });
+
+      if (error) {
+        console.error('Admin creation error:', error);
+        throw error;
+      }
 
       toast({
         title: "Admin créé",
@@ -153,10 +159,16 @@ const Auth = () => {
       // Tente une connexion immédiate
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) {
+        console.log('Sign in error after admin creation:', signInError);
         toast({ title: "Connexion requise", description: "Admin créé, veuillez vous connecter.", variant: "default" });
       }
     } catch (err: any) {
-      toast({ title: "Erreur de création admin", description: err.message || "Échec de la création", variant: "destructive" });
+      console.error('Full admin creation error:', err);
+      toast({ 
+        title: "Erreur de création admin", 
+        description: err.message || err.error?.message || "Échec de la création", 
+        variant: "destructive" 
+      });
     } finally {
       setLoading(false);
     }
