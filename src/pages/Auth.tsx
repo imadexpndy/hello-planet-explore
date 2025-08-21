@@ -284,9 +284,13 @@ const Auth = () => {
                 </Button>
                 <button
                   type="button"
-                  onClick={() => setShowAdminSetup(true)}
+                  onClick={() => {
+                    setLoading(false); // Reset loading state
+                    setShowAdminSetup(true);
+                  }}
                   className="mt-3 text-xs text-muted-foreground hover:text-foreground underline"
                   aria-label="Configurer l'administrateur"
+                  disabled={false}
                 >
                   Créer l'admin (setup)
                 </button>
