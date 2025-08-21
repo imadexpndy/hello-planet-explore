@@ -85,6 +85,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
     for (const file of Array.from(files)) {
       const fileExt = file.name.split('.').pop();
       const fileName = `${Date.now()}_${Math.random().toString(36).substr(2, 9)}.${fileExt}`;
+      // Upload to verification/ prefix which allows anonymous uploads during registration
       const filePath = `verification/${fileName}`;
 
       const { error: uploadError } = await supabase.storage
@@ -100,6 +101,10 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
         });
       } else {
         uploadedUrls.push(filePath);
+        toast({
+          title: "Upload réussi",
+          description: `Fichier ${file.name} uploadé avec succès`,
+        });
       }
     }
 
