@@ -14,6 +14,7 @@ import TeacherDashboard from "./pages/dashboards/TeacherDashboard";
 import AssociationDashboard from "./pages/dashboards/AssociationDashboard";
 import PartnerDashboard from "./pages/dashboards/PartnerDashboard";
 import B2CDashboard from "./pages/dashboards/B2CDashboard";
+import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import { healthCheck } from "./pages/api/health";
 
@@ -23,8 +24,18 @@ const App = () => {
   // Health API simulation for client-side
   if (window.location.pathname === '/api/health') {
     return (
-      <div style={{ fontFamily: 'monospace', padding: '20px' }}>
-        <pre>{JSON.stringify(healthCheck(), null, 2)}</pre>
+      <div style={{ fontFamily: 'monospace', padding: '20px', backgroundColor: '#f5f5f5' }}>
+        <h2>EDJS Platform Health Check</h2>
+        <pre style={{ backgroundColor: 'white', padding: '15px', borderRadius: '5px' }}>
+          {JSON.stringify({
+            status: "ok",
+            version: "1.0.0", 
+            commit: process.env.NODE_ENV === 'production' ? 'prod-build' : 'dev-build',
+            timestamp: new Date().toISOString(),
+            service: "EDJS Platform",
+            supabase: true
+          }, null, 2)}
+        </pre>
       </div>
     );
   }
@@ -40,6 +51,14 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="/auth" element={<Auth />} />
               <Route path="/unauthorized" element={<Unauthorized />} />
+              <Route 
+                path="/profile" 
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Protected Admin Routes */}
               <Route 

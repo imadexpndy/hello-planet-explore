@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { logUserLogin, logUserLogout } from '@/lib/audit';
 
 interface Profile {
   id: string;
@@ -9,7 +10,9 @@ interface Profile {
   email: string;
   first_name: string | null;
   last_name: string | null;
+  name: string | null;
   phone: string | null;
+  whatsapp: string | null;
   role: 'admin' | 'teacher_private' | 'teacher_public' | 'association' | 'partner' | 'b2c_user';
   organization_id: string | null;
   is_verified: boolean;
@@ -151,7 +154,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signIn = async (email: string, password: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
@@ -162,6 +165,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           description: error.message,
           variant: "destructive",
         });
+      } else if (data.user) {
+        // Log successful login
+        setTimeout(() => {
+          logUserLogin(data.user!.id);
+        }, 0);
       }
 
       return { error };
@@ -177,6 +185,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const signOut = async () => {
     try {
+      // Log logout before signing out
+      if (user) {
+        await logUserLogout(user.id);
+      }
+      
       await supabase.auth.signOut();
       setUser(null);
       setSession(null);

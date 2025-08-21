@@ -2,32 +2,34 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useAuth } from '@/hooks/useAuth';
+import { Navigation } from '@/components/Navigation';
+import { Breadcrumbs } from '@/components/Breadcrumbs';
 
 export default function TeacherDashboard() {
-  const { profile, signOut } = useAuth();
+  const { profile } = useAuth();
 
   const isPrivateTeacher = profile?.role === 'teacher_private';
   const isPublicTeacher = profile?.role === 'teacher_public';
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
+    <div className="min-h-screen bg-background flex">
+      <Navigation />
+      
+      <main className="flex-1 p-6">
+        <Breadcrumbs />
+        
+        <div className="max-w-6xl mx-auto">
+          <div className="mb-8">
             <h1 className="text-4xl font-bold text-primary mb-2">Portail Enseignant</h1>
             <div className="flex items-center gap-2">
               <p className="text-muted-foreground">
-                Bienvenue, {profile?.first_name || 'Enseignant'}
+                Bienvenue, {profile?.first_name || profile?.name || 'Enseignant'}
               </p>
               <Badge variant={isPrivateTeacher ? "default" : "secondary"}>
                 {isPrivateTeacher ? 'École Privée' : 'École Publique'}
               </Badge>
             </div>
           </div>
-          <Button onClick={signOut} variant="outline">
-            Déconnexion
-          </Button>
-        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <Card>
@@ -108,7 +110,8 @@ export default function TeacherDashboard() {
             </CardContent>
           </Card>
         )}
-      </div>
+        </div>
+      </main>
     </div>
   );
 }

@@ -18,36 +18,42 @@ export type Database = {
         Row: {
           action: string
           created_at: string
+          entity: string | null
           id: string
           ip_address: unknown | null
           new_values: Json | null
           old_values: Json | null
           record_id: string | null
           table_name: string
+          timestamp: string | null
           user_agent: string | null
           user_id: string | null
         }
         Insert: {
           action: string
           created_at?: string
+          entity?: string | null
           id?: string
           ip_address?: unknown | null
           new_values?: Json | null
           old_values?: Json | null
           record_id?: string | null
           table_name: string
+          timestamp?: string | null
           user_agent?: string | null
           user_id?: string | null
         }
         Update: {
           action?: string
           created_at?: string
+          entity?: string | null
           id?: string
           ip_address?: unknown | null
           new_values?: Json | null
           old_values?: Json | null
           record_id?: string | null
           table_name?: string
+          timestamp?: string | null
           user_agent?: string | null
           user_id?: string | null
         }
@@ -55,6 +61,7 @@ export type Database = {
       }
       bookings: {
         Row: {
+          accompanists_count: number | null
           booking_type: string
           confirmation_deadline: string | null
           created_at: string
@@ -67,11 +74,13 @@ export type Database = {
           payment_status: Database["public"]["Enums"]["payment_status"] | null
           session_id: string
           status: Database["public"]["Enums"]["booking_status"] | null
+          students_count: number | null
           total_amount: number | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          accompanists_count?: number | null
           booking_type: string
           confirmation_deadline?: string | null
           created_at?: string
@@ -84,11 +93,13 @@ export type Database = {
           payment_status?: Database["public"]["Enums"]["payment_status"] | null
           session_id: string
           status?: Database["public"]["Enums"]["booking_status"] | null
+          students_count?: number | null
           total_amount?: number | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          accompanists_count?: number | null
           booking_type?: string
           confirmation_deadline?: string | null
           created_at?: string
@@ -101,6 +112,7 @@ export type Database = {
           payment_status?: Database["public"]["Enums"]["payment_status"] | null
           session_id?: string
           status?: Database["public"]["Enums"]["booking_status"] | null
+          students_count?: number | null
           total_amount?: number | null
           updated_at?: string
           user_id?: string
@@ -184,6 +196,7 @@ export type Database = {
           contact_email: string | null
           contact_phone: string | null
           created_at: string
+          ice: string | null
           id: string
           max_free_tickets: number | null
           name: string
@@ -196,6 +209,7 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
+          ice?: string | null
           id?: string
           max_free_tickets?: number | null
           name: string
@@ -208,6 +222,7 @@ export type Database = {
           contact_email?: string | null
           contact_phone?: string | null
           created_at?: string
+          ice?: string | null
           id?: string
           max_free_tickets?: number | null
           name?: string
@@ -217,6 +232,47 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          booking_id: string
+          created_at: string
+          id: string
+          method: string
+          status: Database["public"]["Enums"]["payment_status"] | null
+          transaction_reference: string | null
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          created_at?: string
+          id?: string
+          method: string
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          transaction_reference?: string | null
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          created_at?: string
+          id?: string
+          method?: string
+          status?: Database["public"]["Enums"]["payment_status"] | null
+          transaction_reference?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           created_at: string
@@ -225,11 +281,13 @@ export type Database = {
           id: string
           is_verified: boolean | null
           last_name: string | null
+          name: string | null
           organization_id: string | null
           phone: string | null
           role: Database["public"]["Enums"]["user_role"]
           updated_at: string
           user_id: string
+          whatsapp: string | null
         }
         Insert: {
           created_at?: string
@@ -238,11 +296,13 @@ export type Database = {
           id?: string
           is_verified?: boolean | null
           last_name?: string | null
+          name?: string | null
           organization_id?: string | null
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id: string
+          whatsapp?: string | null
         }
         Update: {
           created_at?: string
@@ -251,11 +311,13 @@ export type Database = {
           id?: string
           is_verified?: boolean | null
           last_name?: string | null
+          name?: string | null
           organization_id?: string | null
           phone?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
           user_id?: string
+          whatsapp?: string | null
         }
         Relationships: [
           {
@@ -270,42 +332,54 @@ export type Database = {
       sessions: {
         Row: {
           b2c_capacity: number
+          city: string | null
           created_at: string
+          datetime: string | null
           id: string
           is_active: boolean | null
           partner_quota: number | null
           price_mad: number
           session_date: string
           session_time: string
+          session_type: string | null
           spectacle_id: string
+          status: string | null
           total_capacity: number
           updated_at: string
           venue: string
         }
         Insert: {
           b2c_capacity: number
+          city?: string | null
           created_at?: string
+          datetime?: string | null
           id?: string
           is_active?: boolean | null
           partner_quota?: number | null
           price_mad?: number
           session_date: string
           session_time: string
+          session_type?: string | null
           spectacle_id: string
+          status?: string | null
           total_capacity: number
           updated_at?: string
           venue: string
         }
         Update: {
           b2c_capacity?: number
+          city?: string | null
           created_at?: string
+          datetime?: string | null
           id?: string
           is_active?: boolean | null
           partner_quota?: number | null
           price_mad?: number
           session_date?: string
           session_time?: string
+          session_type?: string | null
           spectacle_id?: string
+          status?: string | null
           total_capacity?: number
           updated_at?: string
           venue?: string
@@ -325,11 +399,14 @@ export type Database = {
           age_range_max: number | null
           age_range_min: number | null
           created_at: string
+          created_by: string | null
           description: string | null
           duration_minutes: number | null
           id: string
           is_active: boolean | null
+          level_range: string | null
           poster_url: string | null
+          price: number | null
           title: string
           updated_at: string
         }
@@ -337,11 +414,14 @@ export type Database = {
           age_range_max?: number | null
           age_range_min?: number | null
           created_at?: string
+          created_by?: string | null
           description?: string | null
           duration_minutes?: number | null
           id?: string
           is_active?: boolean | null
+          level_range?: string | null
           poster_url?: string | null
+          price?: number | null
           title: string
           updated_at?: string
         }
@@ -349,11 +429,14 @@ export type Database = {
           age_range_max?: number | null
           age_range_min?: number | null
           created_at?: string
+          created_by?: string | null
           description?: string | null
           duration_minutes?: number | null
           id?: string
           is_active?: boolean | null
+          level_range?: string | null
           poster_url?: string | null
+          price?: number | null
           title?: string
           updated_at?: string
         }
@@ -361,10 +444,14 @@ export type Database = {
       }
       tickets: {
         Row: {
+          assigned_to: string | null
+          association_name: string | null
           booking_id: string
           created_at: string
           holder_name: string | null
           id: string
+          partner_name: string | null
+          pdf_url: string | null
           qr_code: string
           seat_number: string | null
           status: Database["public"]["Enums"]["ticket_status"] | null
@@ -373,10 +460,14 @@ export type Database = {
           used_at: string | null
         }
         Insert: {
+          assigned_to?: string | null
+          association_name?: string | null
           booking_id: string
           created_at?: string
           holder_name?: string | null
           id?: string
+          partner_name?: string | null
+          pdf_url?: string | null
           qr_code: string
           seat_number?: string | null
           status?: Database["public"]["Enums"]["ticket_status"] | null
@@ -385,10 +476,14 @@ export type Database = {
           used_at?: string | null
         }
         Update: {
+          assigned_to?: string | null
+          association_name?: string | null
           booking_id?: string
           created_at?: string
           holder_name?: string | null
           id?: string
+          partner_name?: string | null
+          pdf_url?: string | null
           qr_code?: string
           seat_number?: string | null
           status?: Database["public"]["Enums"]["ticket_status"] | null
