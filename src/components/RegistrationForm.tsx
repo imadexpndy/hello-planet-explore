@@ -256,7 +256,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
                 <p className="text-lg text-muted-foreground">Quelle catégorie vous correspond ?</p>
               </div>
               
-              <div className="grid grid-cols-2 gap-24 w-full">
+              <div className="grid grid-cols-2 gap-48 w-full">
                 <button
                   className={`group relative bg-white p-12 rounded-2xl shadow-lg border transition-all duration-300 hover:shadow-xl hover:-translate-y-1 ${
                     userCategory === 'b2c' 
@@ -329,7 +329,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
                 <p className="text-2xl text-muted-foreground">Quel type d'organisation représentez-vous ?</p>
               </div>
               
-              <div className="grid grid-cols-3 gap-8">
+              <div className="grid grid-cols-3 gap-20">
                 <button
                   className={`p-10 rounded-3xl border-2 transition-all duration-300 hover:scale-[1.02] ${
                     userType === 'teacher_private' 
@@ -382,7 +382,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
                 <p className="text-2xl text-muted-foreground">Quelques détails pour créer votre compte</p>
               </div>
               
-              <div className="grid grid-cols-2 gap-12">
+              <div className="grid grid-cols-2 gap-32">
                 <div className="space-y-8">
                   <div>
                     <Label htmlFor="fullName" className="text-xl font-semibold mb-3 block">Nom complet *</Label>
@@ -448,7 +448,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
               <p className="text-2xl text-muted-foreground">Créez un mot de passe fort</p>
             </div>
             
-            <div className="grid grid-cols-2 gap-12">
+            <div className="grid grid-cols-2 gap-32">
               <div>
                 <Label htmlFor="password" className="text-xl font-semibold mb-3 block">Mot de passe *</Label>
                 <Input
