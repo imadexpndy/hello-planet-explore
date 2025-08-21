@@ -9,14 +9,14 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-gradient-to-r from-primary via-primary to-primary-glow text-primary-foreground hover:shadow-lg hover:shadow-primary/25 hover:scale-105 transform transition-all duration-300",
+        default: "bg-gradient-to-r from-primary via-primary to-primary text-primary-foreground hover:shadow-lg hover:shadow-primary/25 hover:scale-105 transform transition-all duration-300",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 hover:shadow-lg hover:shadow-destructive/25",
         outline:
-          "border border-input bg-background hover:bg-accent hover:text-accent-foreground hover:border-primary/50 hover:shadow-md",
+          "border border-primary/30 bg-primary/5 hover:bg-primary/10 hover:text-primary-foreground hover:border-primary/50 hover:shadow-md",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 hover:shadow-md",
-        ghost: "hover:bg-accent hover:text-accent-foreground hover:shadow-sm",
+          "bg-primary/10 text-primary hover:bg-primary/20 hover:shadow-md",
+        ghost: "hover:bg-primary/10 hover:text-primary hover:shadow-sm",
         link: "text-primary underline-offset-4 hover:underline",
         premium: "bg-gradient-to-r from-accent to-primary text-primary-foreground hover:shadow-lg hover:shadow-accent/25 hover:scale-105 transform transition-all duration-300",
         glow: "bg-gradient-to-r from-primary to-primary-glow text-primary-foreground shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:scale-105 transform transition-all duration-300",

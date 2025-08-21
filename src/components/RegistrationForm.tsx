@@ -846,7 +846,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
       {/* Logo at the top */}
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-30">
         <img 
-          src="/edjs-logo.png" 
+          src="/lovable-uploads/b82bf764-c505-4dd6-960c-99a6acf57b3e.png" 
           alt="L'École du Jeune Spectateur" 
           className="h-20 w-auto drop-shadow-lg"
         />

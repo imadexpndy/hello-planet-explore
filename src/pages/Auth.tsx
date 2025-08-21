@@ -156,7 +156,7 @@ const Auth = () => {
       {/* Logo at the top */}
       <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20">
         <img 
-          src="/edjs-logo.png" 
+          src="/lovable-uploads/b82bf764-c505-4dd6-960c-99a6acf57b3e.png" 
           alt="L'École du Jeune Spectateur" 
           className="h-16 w-auto drop-shadow-lg"
         />
@@ -164,7 +164,7 @@ const Auth = () => {
       
       <div className={`w-full relative z-10 ${mode === 'register' ? 'max-w-none' : 'max-w-md'} ${mode === 'login' ? 'mt-20' : ''}`}>
         {mode === 'login' && (
-          <Card className="backdrop-blur-xl bg-card/80 border-primary/20 shadow-2xl">
+          <Card className="backdrop-blur-xl bg-primary/8 border-primary/30 shadow-2xl">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary/12 rounded-xl pointer-events-none" />
             
             <CardHeader className="text-center relative pb-8 pt-12">
@@ -193,7 +193,7 @@ const Auth = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     disabled={loading}
-                    className="h-12 bg-background/60 border-2 border-muted focus:border-primary/50 focus:bg-background transition-all duration-300 rounded-lg"
+                    className="h-12 bg-primary/5 border-2 border-primary/20 focus:border-primary/50 focus:bg-primary/8 transition-all duration-300 rounded-lg"
                     placeholder="votre@email.com"
                   />
                 </div>
@@ -206,7 +206,7 @@ const Auth = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={loading}
-                    className="h-12 bg-background/60 border-2 border-muted focus:border-primary/50 focus:bg-background transition-all duration-300 rounded-lg"
+                    className="h-12 bg-primary/5 border-2 border-primary/20 focus:border-primary/50 focus:bg-primary/8 transition-all duration-300 rounded-lg"
                     placeholder="••••••••"
                   />
                 </div>
@@ -228,7 +228,7 @@ const Auth = () => {
                     <div className="w-full border-t border-muted" />
                   </div>
                   <div className="relative flex justify-center text-sm">
-                    <span className="px-4 bg-card text-muted-foreground">Nouveau sur EDJS ?</span>
+                    <span className="px-4 bg-primary/5 text-muted-foreground">Nouveau sur EDJS ?</span>
                   </div>
                 </div>
                 <Button 
