@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      associations: {
+        Row: {
+          address: string | null
+          city: string | null
+          contact_person: string | null
+          created_at: string
+          ice_number: string | null
+          id: string
+          name: string
+          updated_at: string
+          verification_status: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          contact_person?: string | null
+          created_at?: string
+          ice_number?: string | null
+          id?: string
+          name: string
+          updated_at?: string
+          verification_status?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          contact_person?: string | null
+          created_at?: string
+          ice_number?: string | null
+          id?: string
+          name?: string
+          updated_at?: string
+          verification_status?: string | null
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
@@ -310,11 +346,18 @@ export type Database = {
       }
       profiles: {
         Row: {
+          address: string | null
+          admin_role: string | null
+          association_id: string | null
+          city: string | null
           consent_date: string | null
+          contact_person: string | null
           created_at: string
           email: string
           email_consent: boolean | null
           first_name: string | null
+          full_name: string | null
+          ice_number: string | null
           id: string
           is_verified: boolean | null
           last_name: string | null
@@ -322,19 +365,31 @@ export type Database = {
           organization_id: string | null
           phone: string | null
           privacy_accepted: boolean | null
+          professional_email: string | null
           role: Database["public"]["Enums"]["user_role"]
+          school_id: string | null
+          season_verified_at: string | null
           terms_accepted: boolean | null
           updated_at: string
           user_id: string
+          verification_documents: string[] | null
+          verification_status: string | null
           whatsapp: string | null
           whatsapp_consent: boolean | null
         }
         Insert: {
+          address?: string | null
+          admin_role?: string | null
+          association_id?: string | null
+          city?: string | null
           consent_date?: string | null
+          contact_person?: string | null
           created_at?: string
           email: string
           email_consent?: boolean | null
           first_name?: string | null
+          full_name?: string | null
+          ice_number?: string | null
           id?: string
           is_verified?: boolean | null
           last_name?: string | null
@@ -342,19 +397,31 @@ export type Database = {
           organization_id?: string | null
           phone?: string | null
           privacy_accepted?: boolean | null
+          professional_email?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          school_id?: string | null
+          season_verified_at?: string | null
           terms_accepted?: boolean | null
           updated_at?: string
           user_id: string
+          verification_documents?: string[] | null
+          verification_status?: string | null
           whatsapp?: string | null
           whatsapp_consent?: boolean | null
         }
         Update: {
+          address?: string | null
+          admin_role?: string | null
+          association_id?: string | null
+          city?: string | null
           consent_date?: string | null
+          contact_person?: string | null
           created_at?: string
           email?: string
           email_consent?: boolean | null
           first_name?: string | null
+          full_name?: string | null
+          ice_number?: string | null
           id?: string
           is_verified?: boolean | null
           last_name?: string | null
@@ -362,14 +429,26 @@ export type Database = {
           organization_id?: string | null
           phone?: string | null
           privacy_accepted?: boolean | null
+          professional_email?: string | null
           role?: Database["public"]["Enums"]["user_role"]
+          school_id?: string | null
+          season_verified_at?: string | null
           terms_accepted?: boolean | null
           updated_at?: string
           user_id?: string
+          verification_documents?: string[] | null
+          verification_status?: string | null
           whatsapp?: string | null
           whatsapp_consent?: boolean | null
         }
         Relationships: [
+          {
+            foreignKeyName: "profiles_association_id_fkey"
+            columns: ["association_id"]
+            isOneToOne: false
+            referencedRelation: "associations"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "profiles_organization_id_fkey"
             columns: ["organization_id"]
@@ -377,7 +456,53 @@ export type Database = {
             referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "profiles_school_id_fkey"
+            columns: ["school_id"]
+            isOneToOne: false
+            referencedRelation: "schools"
+            referencedColumns: ["id"]
+          },
         ]
+      }
+      schools: {
+        Row: {
+          address: string | null
+          city: string | null
+          created_at: string
+          domain: string | null
+          ice_number: string | null
+          id: string
+          name: string
+          school_type: string
+          updated_at: string
+          verification_status: string | null
+        }
+        Insert: {
+          address?: string | null
+          city?: string | null
+          created_at?: string
+          domain?: string | null
+          ice_number?: string | null
+          id?: string
+          name: string
+          school_type: string
+          updated_at?: string
+          verification_status?: string | null
+        }
+        Update: {
+          address?: string | null
+          city?: string | null
+          created_at?: string
+          domain?: string | null
+          ice_number?: string | null
+          id?: string
+          name?: string
+          school_type?: string
+          updated_at?: string
+          verification_status?: string | null
+        }
+        Relationships: []
       }
       sessions: {
         Row: {
