@@ -145,18 +145,27 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-primary/8 p-4 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-accent/10 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-primary/8 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-br from-primary-glow/10 to-transparent rounded-full blur-2xl animate-pulse" style={{ animationDelay: '4s' }} />
       </div>
       
-      <div className={`w-full relative z-10 ${mode === 'register' ? 'max-w-none' : 'max-w-md'}`}>
+      {/* Logo at the top */}
+      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-20">
+        <img 
+          src="/edjs-logo.png" 
+          alt="L'École du Jeune Spectateur" 
+          className="h-16 w-auto drop-shadow-lg"
+        />
+      </div>
+      
+      <div className={`w-full relative z-10 ${mode === 'register' ? 'max-w-none' : 'max-w-md'} ${mode === 'login' ? 'mt-20' : ''}`}>
         {mode === 'login' && (
           <Card className="backdrop-blur-xl bg-card/80 border-primary/20 shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-xl pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/8 rounded-xl pointer-events-none" />
             
             <CardHeader className="text-center relative pb-8 pt-12">
               <div className="mb-6">

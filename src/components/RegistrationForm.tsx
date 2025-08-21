@@ -834,13 +834,22 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
   const progress = (step / maxSteps) * 100;
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-primary/8 p-4 relative overflow-hidden">
       {/* Enhanced animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-primary/8 to-transparent rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-128 h-128 bg-gradient-to-br from-accent/6 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute bottom-1/4 right-1/4 w-128 h-128 bg-gradient-to-br from-primary/6 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-primary-glow/6 to-transparent rounded-full blur-2xl animate-pulse" style={{ animationDelay: '4s' }} />
-        <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-gradient-to-br from-accent/4 to-transparent rounded-full blur-2xl animate-pulse" style={{ animationDelay: '6s' }} />
+        <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-gradient-to-br from-primary/4 to-transparent rounded-full blur-2xl animate-pulse" style={{ animationDelay: '6s' }} />
+      </div>
+      
+      {/* Logo at the top */}
+      <div className="absolute top-8 left-1/2 transform -translate-x-1/2 z-30">
+        <img 
+          src="/edjs-logo.png" 
+          alt="L'École du Jeune Spectateur" 
+          className="h-20 w-auto drop-shadow-lg"
+        />
       </div>
       
       {/* Stylized back button */}
@@ -873,12 +882,12 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
         </div>
       </div>
 
-      <div className="w-full max-w-6xl mx-auto relative z-10">
+      <div className="w-full max-w-6xl mx-auto relative z-10 mt-24">
 
       {/* Enhanced main card */}
       <Card className="w-full border-0 shadow-elegant bg-card/95 backdrop-blur-xl overflow-hidden relative">
         {/* Gradient overlay */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/8 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary/6 pointer-events-none" />
         
         {/* Decorative elements */}
         <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-2xl" />
