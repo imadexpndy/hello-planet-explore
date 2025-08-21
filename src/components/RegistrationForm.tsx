@@ -24,6 +24,7 @@ interface RegistrationFormProps {
 
 export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) => {
   const [step, setStep] = useState(1);
+  const [userCategory, setUserCategory] = useState<'b2c' | 'b2b' | ''>('');
   const [userType, setUserType] = useState<string>('');
   const [schools, setSchools] = useState<School[]>([]);
   const [loading, setLoading] = useState(false);
@@ -54,7 +55,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
   });
 
   useEffect(() => {
-    if (userType === 'teacher') {
+    if (userType === 'teacher_private' || userType === 'teacher_public') {
       fetchSchools();
     }
   }, [userType]);
@@ -125,7 +126,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
     }
 
     // Email validation for teachers
-    if (userType === 'teacher' && formData.schoolId !== 'other') {
+    if ((userType === 'teacher_private' || userType === 'teacher_public') && formData.schoolId !== 'other') {
       const selectedSchool = schools.find(s => s.id === formData.schoolId);
       if (selectedSchool?.domain && !validateEmail(formData.professionalEmail, selectedSchool.domain)) {
         toast({
@@ -159,7 +160,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
       let schoolId = formData.schoolId;
       let associationId = null;
 
-      if (userType === 'teacher' && formData.schoolId === 'other') {
+      if ((userType === 'teacher_private' || userType === 'teacher_public') && formData.schoolId === 'other') {
         const { data: newSchool, error: schoolError } = await supabase
           .from('schools')
           .insert({
@@ -197,14 +198,14 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
 
       // 3. Create profile with appropriate role
       let role: 'admin' | 'teacher_private' | 'teacher_public' | 'association' | 'partner' | 'b2c_user' | 'super_admin' = 'b2c_user';
-      if (userType === 'teacher') {
-        role = formData.schoolType === 'private' ? 'teacher_private' : 'teacher_public';
+      if (userType === 'teacher_private' || userType === 'teacher_public') {
+        role = userType as 'teacher_private' | 'teacher_public';
       } else if (userType === 'association') {
         role = 'association';
       }
 
       const verificationStatus = 
-        userType === 'teacher' && formData.schoolType === 'public' ? 'pending' :
+        userType === 'teacher_public' ? 'pending' :
         userType === 'association' ? 'pending' :
         'approved';
 
@@ -251,31 +252,97 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
     }
   };
 
+  const renderCategorySelection = () => (
+    <div className="space-y-6">
+      <div className="text-center mb-6">
+        <h3 className="text-lg font-semibold mb-2">Quel est votre profil ?</h3>
+        <p className="text-muted-foreground">Choisissez la catégorie qui vous correspond</p>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card 
+          className={`cursor-pointer transition-colors hover:bg-accent ${userCategory === 'b2c' ? 'ring-2 ring-primary' : ''}`}
+          onClick={() => {
+            setUserCategory('b2c');
+            setUserType('b2c');
+          }}
+        >
+          <CardContent className="p-8 text-center">
+            <User className="h-16 w-16 mx-auto mb-4 text-primary" />
+            <h3 className="text-xl font-semibold mb-2">Particulier</h3>
+            <p className="text-sm text-muted-foreground">
+              Parents et familles souhaitant acheter des billets individuellement
+            </p>
+            <div className="mt-4 p-3 bg-muted rounded-lg">
+              <p className="text-xs font-medium">✓ Accès immédiat</p>
+              <p className="text-xs text-muted-foreground">Inscription rapide, achat direct</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card 
+          className={`cursor-pointer transition-colors hover:bg-accent ${userCategory === 'b2b' ? 'ring-2 ring-primary' : ''}`}
+          onClick={() => setUserCategory('b2b')}
+        >
+          <CardContent className="p-8 text-center">
+            <Building2 className="h-16 w-16 mx-auto mb-4 text-primary" />
+            <h3 className="text-xl font-semibold mb-2">Professionnel</h3>
+            <p className="text-sm text-muted-foreground">
+              Enseignants, associations et organismes éducatifs
+            </p>
+            <div className="mt-4 p-3 bg-muted rounded-lg">
+              <p className="text-xs font-medium">Tarifs préférentiels</p>
+              <p className="text-xs text-muted-foreground">Validation requise</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+
+      <div className="flex justify-between">
+        <Button variant="outline" onClick={onBack}>
+          <ArrowLeft className="mr-2 h-4 w-4" />
+          Retour
+        </Button>
+        <Button 
+          onClick={() => setStep(2)} 
+          disabled={!userCategory}
+        >
+          Continuer
+        </Button>
+      </div>
+    </div>
+  );
+
   const renderUserTypeSelection = () => (
     <div className="space-y-4">
+      <div className="text-center mb-6">
+        <h3 className="text-lg font-semibold mb-2">Précisez votre profil professionnel</h3>
+        <p className="text-muted-foreground">Sélectionnez votre type d'organisation</p>
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Card 
-          className={`cursor-pointer transition-colors hover:bg-accent ${userType === 'b2c' ? 'ring-2 ring-primary' : ''}`}
-          onClick={() => setUserType('b2c')}
+          className={`cursor-pointer transition-colors hover:bg-accent ${userType === 'teacher_private' ? 'ring-2 ring-primary' : ''}`}
+          onClick={() => setUserType('teacher_private')}
         >
           <CardContent className="p-6 text-center">
-            <User className="h-12 w-12 mx-auto mb-4 text-primary" />
-            <h3 className="font-semibold">Parent / Particulier</h3>
+            <GraduationCap className="h-12 w-12 mx-auto mb-4 text-primary" />
+            <h3 className="font-semibold">École Privée</h3>
             <p className="text-sm text-muted-foreground mt-2">
-              Achat de billets pour famille
+              Vérification par email du domaine
             </p>
           </CardContent>
         </Card>
 
         <Card 
-          className={`cursor-pointer transition-colors hover:bg-accent ${userType === 'teacher' ? 'ring-2 ring-primary' : ''}`}
-          onClick={() => setUserType('teacher')}
+          className={`cursor-pointer transition-colors hover:bg-accent ${userType === 'teacher_public' ? 'ring-2 ring-primary' : ''}`}
+          onClick={() => setUserType('teacher_public')}
         >
           <CardContent className="p-6 text-center">
-            <GraduationCap className="h-12 w-12 mx-auto mb-4 text-primary" />
-            <h3 className="font-semibold">Enseignant</h3>
+            <GraduationCap className="h-12 w-12 mx-auto mb-4 text-accent" />
+            <h3 className="font-semibold">École Publique</h3>
             <p className="text-sm text-muted-foreground mt-2">
-              École publique ou privée
+              Documents officiels requis
             </p>
           </CardContent>
         </Card>
@@ -293,37 +360,32 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
           </CardContent>
         </Card>
 
-        <Card 
-          className={`cursor-pointer transition-colors hover:bg-accent ${userType === 'partner' ? 'ring-2 ring-primary' : ''}`}
-          onClick={() => setUserType('partner')}
-        >
+        <Card className="cursor-not-allowed opacity-50">
           <CardContent className="p-6 text-center">
-            <Building2 className="h-12 w-12 mx-auto mb-4 text-primary" />
-            <h3 className="font-semibold">Partenaire</h3>
+            <Building2 className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+            <h3 className="font-semibold text-muted-foreground">Partenaire</h3>
             <p className="text-sm text-muted-foreground mt-2">
-              Contactez l'administration
+              Créé par l'administration
             </p>
           </CardContent>
         </Card>
       </div>
 
-      {userType === 'partner' && (
-        <Alert>
-          <AlertDescription>
-            Les comptes partenaires sont créés uniquement par l'administration. 
-            Veuillez contacter l'équipe support pour plus d'informations.
-          </AlertDescription>
-        </Alert>
-      )}
+      <Alert>
+        <AlertDescription>
+          Les comptes partenaires sont créés uniquement par l'administration. 
+          Contactez l'équipe support pour devenir partenaire.
+        </AlertDescription>
+      </Alert>
 
       <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack}>
+        <Button variant="outline" onClick={() => setStep(1)}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
         <Button 
-          onClick={() => setStep(2)} 
-          disabled={!userType || userType === 'partner'}
+          onClick={() => setStep(3)} 
+          disabled={!userType}
         >
           Continuer
         </Button>
@@ -402,12 +464,12 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
       </div>
 
       <div className="flex justify-between">
-        <Button variant="outline" onClick={() => setStep(1)}>
+        <Button variant="outline" onClick={() => userCategory === 'b2c' ? setStep(1) : setStep(2)}>
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
         <Button 
-          onClick={() => setStep(3)}
+          onClick={() => setStep(userCategory === 'b2c' ? 3 : 4)}
           disabled={!formData.email || !formData.fullName || !formData.password || !formData.phone}
         >
           Continuer
@@ -427,159 +489,152 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
             </AlertDescription>
           </Alert>
           
-          <div className="flex justify-between">
-            <Button variant="outline" onClick={() => setStep(2)}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Retour
-            </Button>
-            <Button onClick={handleSubmit} disabled={loading}>
-              {loading ? "Création..." : "Créer mon compte"}
-            </Button>
-          </div>
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={() => setStep(userCategory === 'b2c' ? 2 : 3)}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Retour
+              </Button>
+              <Button onClick={handleSubmit} disabled={loading}>
+                {loading ? "Création..." : "Créer mon compte"}
+              </Button>
+            </div>
         </div>
       );
     }
 
-    if (userType === 'teacher') {
-      return (
-        <div className="space-y-4">
-          <div>
-            <Label htmlFor="schoolType">Type d'école *</Label>
-            <Select value={formData.schoolType} onValueChange={(value) => setFormData(prev => ({...prev, schoolType: value}))}>
-              <SelectTrigger>
-                <SelectValue placeholder="Sélectionnez le type d'école" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="public">École publique</SelectItem>
-                <SelectItem value="private">École privée</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {formData.schoolType && (
-            <div>
-              <Label htmlFor="school">École *</Label>
-              <Select value={formData.schoolId} onValueChange={(value) => setFormData(prev => ({...prev, schoolId: value}))}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Sélectionnez votre école" />
-                </SelectTrigger>
-                <SelectContent>
-                  {schools
-                    .filter(school => school.school_type === formData.schoolType)
-                    .map(school => (
-                      <SelectItem key={school.id} value={school.id}>
-                        {school.name} - {school.city}
-                      </SelectItem>
-                    ))}
-                  <SelectItem value="other">Autre (créer une nouvelle école)</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          )}
-
-          {formData.schoolId === 'other' && (
-            <div className="space-y-4 p-4 border rounded-lg">
-              <h4 className="font-semibold">Nouvelle école</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          if (userType === 'teacher_private' || userType === 'teacher_public') {
+            const schoolType = userType === 'teacher_private' ? 'private' : 'public';
+            return (
+              <div className="space-y-4">
                 <div>
-                  <Label htmlFor="newSchoolName">Nom de l'école *</Label>
+                  <Label htmlFor="school">École *</Label>
+                  <Select value={formData.schoolId} onValueChange={(value) => setFormData(prev => ({...prev, schoolId: value, schoolType}))}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Sélectionnez votre école" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {schools
+                        .filter(school => school.school_type === schoolType)
+                        .map(school => (
+                          <SelectItem key={school.id} value={school.id}>
+                            {school.name} - {school.city}
+                          </SelectItem>
+                        ))}
+                      <SelectItem value="other">Autre (créer une nouvelle école)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {formData.schoolId === 'other' && (
+                  <div className="space-y-4 p-4 border rounded-lg">
+                    <h4 className="font-semibold">Nouvelle école {schoolType === 'private' ? 'privée' : 'publique'}</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="newSchoolName">Nom de l'école *</Label>
+                        <Input
+                          id="newSchoolName"
+                          value={formData.newSchoolName}
+                          onChange={(e) => setFormData(prev => ({...prev, newSchoolName: e.target.value}))}
+                          required
+                        />
+                      </div>
+                      <div>
+                        <Label htmlFor="newSchoolICE">ICE</Label>
+                        <Input
+                          id="newSchoolICE"
+                          value={formData.newSchoolICE}
+                          onChange={(e) => setFormData(prev => ({...prev, newSchoolICE: e.target.value}))}
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <Label htmlFor="newSchoolAddress">Adresse</Label>
+                      <Input
+                        id="newSchoolAddress"
+                        value={formData.newSchoolAddress}
+                        onChange={(e) => setFormData(prev => ({...prev, newSchoolAddress: e.target.value}))}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="newSchoolCity">Ville</Label>
+                      <Input
+                        id="newSchoolCity"
+                        value={formData.newSchoolCity}
+                        onChange={(e) => setFormData(prev => ({...prev, newSchoolCity: e.target.value}))}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <div>
+                  <Label htmlFor="professionalEmail">Email professionnel *</Label>
                   <Input
-                    id="newSchoolName"
-                    value={formData.newSchoolName}
-                    onChange={(e) => setFormData(prev => ({...prev, newSchoolName: e.target.value}))}
+                    id="professionalEmail"
+                    type="email"
+                    value={formData.professionalEmail}
+                    onChange={(e) => setFormData(prev => ({...prev, professionalEmail: e.target.value}))}
                     required
                   />
+                  {formData.schoolId !== 'other' && schools.find(s => s.id === formData.schoolId)?.domain && (
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Doit utiliser le domaine @{schools.find(s => s.id === formData.schoolId)?.domain}
+                    </p>
+                  )}
                 </div>
-                <div>
-                  <Label htmlFor="newSchoolICE">ICE</Label>
-                  <Input
-                    id="newSchoolICE"
-                    value={formData.newSchoolICE}
-                    onChange={(e) => setFormData(prev => ({...prev, newSchoolICE: e.target.value}))}
-                  />
+
+                {userType === 'teacher_public' && (
+                  <div>
+                    <Label htmlFor="documents">Documents de vérification *</Label>
+                    <Input
+                      id="documents"
+                      type="file"
+                      multiple
+                      accept=".pdf,.jpg,.jpeg,.png"
+                      onChange={handleFileUpload}
+                      required
+                    />
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Téléchargez vos documents officiels (carte professionnelle, attestation, etc.)
+                    </p>
+                    {uploadedDocs.length > 0 && (
+                      <p className="text-sm text-green-600 mt-1">
+                        {uploadedDocs.length} document(s) téléchargé(s)
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {userType === 'teacher_public' ? (
+                  <Alert>
+                    <AlertDescription>
+                      <strong>École Publique:</strong> Votre compte nécessite une validation manuelle avec documents officiels. 
+                      Accès après approbation administrative.
+                    </AlertDescription>
+                  </Alert>
+                ) : (
+                  <Alert>
+                    <AlertDescription>
+                      <strong>École Privée:</strong> Vérification automatique par email du domaine scolaire. 
+                      Accès immédiat après confirmation.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="flex justify-between">
+                  <Button variant="outline" onClick={() => setStep(3)}>
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Retour
+                  </Button>
+                  <Button 
+                    onClick={handleSubmit} 
+                    disabled={loading || !formData.schoolId || !formData.professionalEmail || (userType === 'teacher_public' && uploadedDocs.length === 0)}
+                  >
+                    {loading ? "Création..." : "Créer mon compte"}
+                  </Button>
                 </div>
               </div>
-              <div>
-                <Label htmlFor="newSchoolAddress">Adresse</Label>
-                <Input
-                  id="newSchoolAddress"
-                  value={formData.newSchoolAddress}
-                  onChange={(e) => setFormData(prev => ({...prev, newSchoolAddress: e.target.value}))}
-                />
-              </div>
-              <div>
-                <Label htmlFor="newSchoolCity">Ville</Label>
-                <Input
-                  id="newSchoolCity"
-                  value={formData.newSchoolCity}
-                  onChange={(e) => setFormData(prev => ({...prev, newSchoolCity: e.target.value}))}
-                />
-              </div>
-            </div>
-          )}
-
-          <div>
-            <Label htmlFor="professionalEmail">Email professionnel *</Label>
-            <Input
-              id="professionalEmail"
-              type="email"
-              value={formData.professionalEmail}
-              onChange={(e) => setFormData(prev => ({...prev, professionalEmail: e.target.value}))}
-              required
-            />
-            {formData.schoolId !== 'other' && schools.find(s => s.id === formData.schoolId)?.domain && (
-              <p className="text-sm text-muted-foreground mt-1">
-                Doit utiliser le domaine @{schools.find(s => s.id === formData.schoolId)?.domain}
-              </p>
-            )}
-          </div>
-
-          {formData.schoolType === 'public' && (
-            <div>
-              <Label htmlFor="documents">Documents de vérification *</Label>
-              <Input
-                id="documents"
-                type="file"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png"
-                onChange={handleFileUpload}
-                required
-              />
-              <p className="text-sm text-muted-foreground mt-1">
-                Téléchargez vos documents officiels (carte professionnelle, attestation, etc.)
-              </p>
-              {uploadedDocs.length > 0 && (
-                <p className="text-sm text-green-600 mt-1">
-                  {uploadedDocs.length} document(s) téléchargé(s)
-                </p>
-              )}
-            </div>
-          )}
-
-          {formData.schoolType === 'public' && (
-            <Alert>
-              <AlertDescription>
-                Les enseignants d'écoles publiques nécessitent une vérification manuelle. 
-                Votre compte sera activé après validation par un administrateur.
-              </AlertDescription>
-            </Alert>
-          )}
-
-          <div className="flex justify-between">
-            <Button variant="outline" onClick={() => setStep(2)}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Retour
-            </Button>
-            <Button 
-              onClick={handleSubmit} 
-              disabled={loading || !formData.schoolType || !formData.professionalEmail}
-            >
-              {loading ? "Création..." : "Créer mon compte"}
-            </Button>
-          </div>
-        </div>
-      );
-    }
+            );
+          }
 
     if (userType === 'association') {
       return (
@@ -659,18 +714,18 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
             </AlertDescription>
           </Alert>
 
-          <div className="flex justify-between">
-            <Button variant="outline" onClick={() => setStep(2)}>
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              Retour
-            </Button>
-            <Button 
-              onClick={handleSubmit} 
-              disabled={loading || !formData.associationName || !formData.contactPerson || uploadedDocs.length === 0}
-            >
-              {loading ? "Création..." : "Créer mon compte"}
-            </Button>
-          </div>
+            <div className="flex justify-between">
+              <Button variant="outline" onClick={() => setStep(3)}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Retour
+              </Button>
+              <Button 
+                onClick={handleSubmit} 
+                disabled={loading || !formData.associationName || !formData.contactPerson || uploadedDocs.length === 0}
+              >
+                {loading ? "Création..." : "Créer mon compte"}
+              </Button>
+            </div>
         </div>
       );
     }
@@ -680,11 +735,11 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
 
   const getStepTitle = () => {
     switch (step) {
-      case 1: return "Type de compte";
-      case 2: return "Informations personnelles";
-      case 3: 
-        if (userType === 'b2c') return "Finalisation";
-        if (userType === 'teacher') return "Informations scolaires";
+      case 1: return "Choisir mon profil";
+      case 2: return userCategory === 'b2c' ? "Informations personnelles" : "Type professionnel";
+      case 3: return userCategory === 'b2c' ? "Finalisation" : "Informations personnelles";
+      case 4: 
+        if (userType === 'teacher_private' || userType === 'teacher_public') return "Informations scolaires";
         if (userType === 'association') return "Informations association";
         return "Informations spécifiques";
       default: return "";
@@ -696,13 +751,16 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
       <CardHeader>
         <CardTitle>{getStepTitle()}</CardTitle>
         <CardDescription>
-          Étape {step} sur 3
+          Étape {step} sur {userCategory === 'b2c' ? 3 : 4}
         </CardDescription>
       </CardHeader>
       <CardContent>
-        {step === 1 && renderUserTypeSelection()}
-        {step === 2 && renderBasicInfo()}
-        {step === 3 && renderSpecificInfo()}
+        {step === 1 && renderCategorySelection()}
+        {step === 2 && userCategory === 'b2b' && renderUserTypeSelection()}
+        {step === 2 && userCategory === 'b2c' && renderBasicInfo()}
+        {step === 3 && userCategory === 'b2b' && renderBasicInfo()}
+        {step === 3 && userCategory === 'b2c' && renderSpecificInfo()}
+        {step === 4 && renderSpecificInfo()}
       </CardContent>
     </Card>
   );
