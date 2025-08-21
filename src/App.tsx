@@ -27,6 +27,7 @@ import NotFound from "./pages/NotFound";
 import { Privacy } from "./pages/Privacy";
 import { Terms } from "./pages/Terms";
 import { healthCheck } from "./pages/api/health";
+import AdminSetup from "./pages/admin/AdminSetup";
 
 const queryClient = new QueryClient();
 
@@ -159,6 +160,9 @@ const App = () => {
                   </ProtectedRoute>
                 } 
               />
+              
+              {/* Admin setup (one-time) */}
+              <Route path="/admin/setup" element={<AdminSetup />} />
               
               {/* Protected B2C Routes */}
               <Route 
