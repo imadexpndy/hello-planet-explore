@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 import { Navigation } from '@/components/Navigation';
 import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { Link } from 'react-router-dom';
 
 export default function AdminDashboard() {
   const { profile } = useAuth();
@@ -22,36 +23,43 @@ export default function AdminDashboard() {
             </p>
           </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Spectacles</CardTitle>
-              <CardDescription>Gérer les spectacles et sessions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Gérer les spectacles</Button>
-            </CardContent>
-          </Card>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Spectacles</CardTitle>
+                <CardDescription>Gérer les spectacles et sessions</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-2">
+                  <Link to="/admin/spectacles">
+                    <Button className="w-full">Gérer les spectacles</Button>
+                  </Link>
+                  <Link to="/admin/sessions">
+                    <Button variant="outline" className="w-full">Gérer les sessions</Button>
+                  </Link>
+                </div>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Utilisateurs</CardTitle>
-              <CardDescription>Gérer les comptes utilisateurs</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Gérer les utilisateurs</Button>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Utilisateurs</CardTitle>
+                <CardDescription>Gérer les comptes utilisateurs</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full">Gérer les utilisateurs</Button>
+              </CardContent>
+            </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Réservations</CardTitle>
-              <CardDescription>Voir toutes les réservations</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Voir les réservations</Button>
-            </CardContent>
-          </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle>Réservations</CardTitle>
+                <CardDescription>Voir toutes les réservations</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full">Voir les réservations</Button>
+              </CardContent>
+            </Card>
 
           <Card>
             <CardHeader>

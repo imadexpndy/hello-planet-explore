@@ -10,6 +10,9 @@ import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import Unauthorized from "./pages/Unauthorized";
 import AdminDashboard from "./pages/dashboards/AdminDashboard";
+import AdminSpectacles from "./pages/admin/AdminSpectacles";
+import AdminSessions from "./pages/admin/AdminSessions";
+import PrivateSchoolBooking from "./pages/teacher/PrivateSchoolBooking";
 import TeacherDashboard from "./pages/dashboards/TeacherDashboard";
 import AssociationDashboard from "./pages/dashboards/AssociationDashboard";
 import PartnerDashboard from "./pages/dashboards/PartnerDashboard";
@@ -69,6 +72,22 @@ const App = () => {
                   </ProtectedRoute>
                 } 
               />
+              <Route 
+                path="/admin/spectacles" 
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminSpectacles />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/sessions" 
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminSessions />
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Protected Teacher Routes */}
               <Route 
@@ -76,6 +95,14 @@ const App = () => {
                 element={
                   <ProtectedRoute allowedRoles={['teacher_private', 'teacher_public']}>
                     <TeacherDashboard />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/teacher/new-booking" 
+                element={
+                  <ProtectedRoute requiredRole="teacher_private">
+                    <PrivateSchoolBooking />
                   </ProtectedRoute>
                 } 
               />
