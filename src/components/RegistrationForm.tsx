@@ -253,59 +253,85 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
   };
 
   const renderCategorySelection = () => (
-    <div className="space-y-6">
-      <div className="text-center mb-6">
-        <h3 className="text-lg font-semibold mb-2">Quel est votre profil ?</h3>
-        <p className="text-muted-foreground">Choisissez la catégorie qui vous correspond</p>
-      </div>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div className="space-y-8">      
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card 
-          className={`cursor-pointer transition-colors hover:bg-accent ${userCategory === 'b2c' ? 'ring-2 ring-primary' : ''}`}
+          className={`group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 ${
+            userCategory === 'b2c' 
+              ? 'ring-2 ring-primary border-primary bg-primary/5' 
+              : 'border-border hover:border-primary/50'
+          }`}
           onClick={() => {
             setUserCategory('b2c');
             setUserType('b2c');
           }}
         >
-          <CardContent className="p-8 text-center">
-            <User className="h-16 w-16 mx-auto mb-4 text-primary" />
-            <h3 className="text-xl font-semibold mb-2">Particulier</h3>
-            <p className="text-sm text-muted-foreground">
-              Parents et familles souhaitant acheter des billets individuellement
-            </p>
-            <div className="mt-4 p-3 bg-muted rounded-lg">
-              <p className="text-xs font-medium">✓ Accès immédiat</p>
-              <p className="text-xs text-muted-foreground">Inscription rapide, achat direct</p>
+          <CardContent className="p-10 text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-full transform translate-x-16 -translate-y-16" />
+            
+            <div className="relative z-10">
+              <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-primary to-primary/80 rounded-2xl flex items-center justify-center shadow-lg">
+                <User className="h-10 w-10 text-white" />
+              </div>
+              
+              <h3 className="text-2xl font-bold mb-3 text-foreground">Particulier</h3>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                Parents et familles souhaitant acheter des billets individuellement
+              </p>
+              
+              <div className="bg-gradient-to-r from-accent/20 to-primary/10 rounded-xl p-4 border border-accent/20">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                  <p className="text-sm font-semibold text-foreground">Accès immédiat</p>
+                </div>
+                <p className="text-xs text-muted-foreground">Inscription rapide, achat direct</p>
+              </div>
             </div>
           </CardContent>
         </Card>
 
         <Card 
-          className={`cursor-pointer transition-colors hover:bg-accent ${userCategory === 'b2b' ? 'ring-2 ring-primary' : ''}`}
+          className={`group cursor-pointer transition-all duration-300 hover:scale-105 hover:shadow-xl border-2 ${
+            userCategory === 'b2b' 
+              ? 'ring-2 ring-primary border-primary bg-primary/5' 
+              : 'border-border hover:border-primary/50'
+          }`}
           onClick={() => setUserCategory('b2b')}
         >
-          <CardContent className="p-8 text-center">
-            <Building2 className="h-16 w-16 mx-auto mb-4 text-primary" />
-            <h3 className="text-xl font-semibold mb-2">Professionnel</h3>
-            <p className="text-sm text-muted-foreground">
-              Enseignants, associations et organismes éducatifs
-            </p>
-            <div className="mt-4 p-3 bg-muted rounded-lg">
-              <p className="text-xs font-medium">Tarifs préférentiels</p>
-              <p className="text-xs text-muted-foreground">Validation requise</p>
+          <CardContent className="p-10 text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-accent/10 to-transparent rounded-full transform translate-x-16 -translate-y-16" />
+            
+            <div className="relative z-10">
+              <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-accent to-accent/80 rounded-2xl flex items-center justify-center shadow-lg">
+                <Building2 className="h-10 w-10 text-white" />
+              </div>
+              
+              <h3 className="text-2xl font-bold mb-3 text-foreground">Professionnel</h3>
+              <p className="text-muted-foreground leading-relaxed mb-6">
+                Enseignants, associations et organismes éducatifs
+              </p>
+              
+              <div className="bg-gradient-to-r from-primary/10 to-accent/20 rounded-xl p-4 border border-primary/20">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <div className="w-2 h-2 bg-primary rounded-full" />
+                  <p className="text-sm font-semibold text-foreground">Tarifs préférentiels</p>
+                </div>
+                <p className="text-xs text-muted-foreground">Validation requise</p>
+              </div>
             </div>
           </CardContent>
         </Card>
       </div>
 
-      <div className="flex justify-between">
-        <Button variant="outline" onClick={onBack}>
+      <div className="flex justify-between pt-6">
+        <Button variant="outline" onClick={onBack} className="px-8 py-3 hover:scale-105 transition-transform">
           <ArrowLeft className="mr-2 h-4 w-4" />
           Retour
         </Button>
         <Button 
           onClick={() => setStep(2)} 
           disabled={!userCategory}
+          className="px-8 py-3 hover:scale-105 transition-transform disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Continuer
         </Button>
@@ -750,43 +776,51 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
   const progress = (step / maxSteps) * 100;
 
   return (
-    <div className="w-full max-w-7xl mx-auto p-4">
+    <div className="w-full max-w-6xl mx-auto p-6">
       {/* Progress bar */}
-      <div className="mb-6">
-        <div className="flex justify-between items-center mb-2">
-          <span className="text-sm text-muted-foreground">Étape {step} sur {maxSteps}</span>
-          <span className="text-sm text-muted-foreground">{Math.round(progress)}%</span>
+      <div className="mb-8">
+        <div className="flex justify-between items-center mb-3">
+          <span className="text-sm font-medium text-muted-foreground">Étape {step} sur {maxSteps}</span>
+          <span className="text-sm font-semibold text-primary">{Math.round(progress)}%</span>
         </div>
-        <div className="w-full bg-muted rounded-full h-2">
+        <div className="w-full bg-muted/30 rounded-full h-3 overflow-hidden">
           <div 
-            className="bg-primary h-2 rounded-full transition-all duration-500 ease-out"
+            className="bg-gradient-to-r from-primary to-primary/80 h-full rounded-full transition-all duration-700 ease-in-out transform"
             style={{ width: `${progress}%` }}
           />
         </div>
       </div>
 
       {/* Main card */}
-      <Card className="w-full shadow-xl">
-        <CardHeader className="text-center pb-6">
-          <CardTitle className="text-2xl font-bold">
-            {getStepTitle()}
-          </CardTitle>
-          <CardDescription className="text-base">
-            {step === 1 && "Commençons par identifier votre profil"}
-            {step === 2 && userCategory === 'b2b' && "Précisez votre type d'organisation"}
-            {step === 2 && userCategory === 'b2c' && "Vos informations personnelles"}
-            {step === 3 && userCategory === 'b2b' && "Vos informations personnelles"}
-            {step === 3 && userCategory === 'b2c' && "Finalisez votre inscription"}
-            {step === 4 && "Informations spécifiques à votre organisation"}
-          </CardDescription>
+      <Card className="w-full border-0 shadow-2xl bg-gradient-to-br from-card via-card to-card/95 backdrop-blur-sm overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+        
+        <CardHeader className="relative text-center pb-8 pt-10">
+          <div className="space-y-2">
+            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent animate-fade-in">
+              {getStepTitle()}
+            </CardTitle>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary to-primary/60 mx-auto rounded-full" />
+            <CardDescription className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto leading-relaxed">
+              {step === 1 && "Commençons par identifier votre profil pour personnaliser votre expérience"}
+              {step === 2 && userCategory === 'b2b' && "Précisez votre type d'organisation pour des services adaptés"}
+              {step === 2 && userCategory === 'b2c' && "Vos informations personnelles pour finaliser votre compte"}
+              {step === 3 && userCategory === 'b2b' && "Vos informations personnelles pour compléter votre profil"}
+              {step === 3 && userCategory === 'b2c' && "Dernière étape pour finaliser votre inscription"}
+              {step === 4 && "Informations spécifiques à votre organisation pour la validation"}
+            </CardDescription>
+          </div>
         </CardHeader>
-        <CardContent className="px-12 pb-8">
-          {step === 1 && renderCategorySelection()}
-          {step === 2 && userCategory === 'b2b' && renderUserTypeSelection()}
-          {step === 2 && userCategory === 'b2c' && renderBasicInfo()}
-          {step === 3 && userCategory === 'b2b' && renderBasicInfo()}
-          {step === 3 && userCategory === 'b2c' && renderSpecificInfo()}
-          {step === 4 && renderSpecificInfo()}
+        
+        <CardContent className="relative px-16 pb-12">
+          <div className="animate-fade-in">
+            {step === 1 && renderCategorySelection()}
+            {step === 2 && userCategory === 'b2b' && renderUserTypeSelection()}
+            {step === 2 && userCategory === 'b2c' && renderBasicInfo()}
+            {step === 3 && userCategory === 'b2b' && renderBasicInfo()}
+            {step === 3 && userCategory === 'b2c' && renderSpecificInfo()}
+            {step === 4 && renderSpecificInfo()}
+          </div>
         </CardContent>
       </Card>
     </div>
