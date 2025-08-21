@@ -145,7 +145,7 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-primary/8 p-4 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/8 via-primary/4 to-primary/12 p-4 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl animate-pulse" />
@@ -165,7 +165,7 @@ const Auth = () => {
       <div className={`w-full relative z-10 ${mode === 'register' ? 'max-w-none' : 'max-w-md'} ${mode === 'login' ? 'mt-20' : ''}`}>
         {mode === 'login' && (
           <Card className="backdrop-blur-xl bg-card/80 border-primary/20 shadow-2xl">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-primary/8 rounded-xl pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-primary/12 rounded-xl pointer-events-none" />
             
             <CardHeader className="text-center relative pb-8 pt-12">
               <div className="mb-6">
