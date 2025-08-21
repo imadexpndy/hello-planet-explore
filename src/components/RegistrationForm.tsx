@@ -249,8 +249,8 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
     switch (currentStep) {
       case 1:
         return (
-          <div className="min-h-screen flex items-center justify-center px-4">
-            <div className="w-full max-w-[1400px] mx-auto">
+          <div className="min-h-screen flex items-center justify-center px-1">
+            <div className="w-full max-w-[95vw] mx-auto">
               <div className="text-center mb-20">
                 <h1 className="text-4xl font-bold text-foreground mb-6">Choisissez votre profil</h1>
                 <p className="text-lg text-muted-foreground">Quelle catégorie vous correspond ?</p>
@@ -323,7 +323,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
       case 2:
         if (userCategory === 'b2b') {
           return (
-            <div className="w-full max-w-7xl mx-auto">
+            <div className="w-full max-w-[95vw] mx-auto">
               <div className="text-center mb-12">
                 <h1 className="text-5xl font-bold text-foreground mb-4">Précisez votre profil</h1>
                 <p className="text-2xl text-muted-foreground">Quel type d'organisation représentez-vous ?</p>
@@ -376,7 +376,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
       case 3:
         if (userCategory === 'b2c' || (userCategory === 'b2b' && currentStep === 3)) {
           return (
-            <div className="w-full max-w-5xl mx-auto">
+            <div className="w-full max-w-[95vw] mx-auto">
               <div className="text-center mb-12">
                 <h1 className="text-5xl font-bold text-foreground mb-4">Vos informations</h1>
                 <p className="text-2xl text-muted-foreground">Quelques détails pour créer votre compte</p>
@@ -442,7 +442,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
         }
       case 4:
         return (
-          <div className="w-full max-w-4xl mx-auto">
+          <div className="w-full max-w-[95vw] mx-auto">
             <div className="text-center mb-12">
               <h1 className="text-5xl font-bold text-foreground mb-4">Sécurisez votre compte</h1>
               <p className="text-2xl text-muted-foreground">Créez un mot de passe fort</p>
@@ -651,7 +651,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 flex flex-col">
       {/* Progress Bar */}
       <div className="w-full bg-white/80 backdrop-blur-sm border-b sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto px-6 py-4">
+        <div className="max-w-[95vw] mx-auto px-2 py-4">
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm font-medium text-muted-foreground">
               Étape {currentStep} sur {totalSteps}
@@ -665,7 +665,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-8">
+      <div className="flex-1 flex items-center justify-center p-2">
         <div className="w-full">
           {renderStep()}
         </div>
@@ -673,7 +673,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
 
       {/* Navigation */}
       <div className="bg-white/80 backdrop-blur-sm border-t sticky bottom-0">
-        <div className="max-w-4xl mx-auto px-6 py-6">
+        <div className="max-w-[95vw] mx-auto px-2 py-6">
           <div className="flex justify-between items-center">
             <Button
               variant="ghost"
