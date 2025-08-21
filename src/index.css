@@ -20,7 +20,7 @@ All colors MUST be HSL.
     /* EDJS Enhanced Primary - Custom gradient colors */
     --primary: 71 100% 40%;        /* #BDCF00 - Accurate HSL conversion */
     --primary-foreground: 0 0% 0%;
-    --primary-glow: 64 89% 27%;     /* #7e8a01 - Accurate HSL conversion */
+    --primary-glow: 65 98% 38%;     /* #afbf02 - New lighter green */
 
     --secondary: 0 0% 96%;
     --secondary-foreground: 0 0% 0%;
@@ -70,7 +70,7 @@ All colors MUST be HSL.
 
     --primary: 71 100% 40%;        /* #BDCF00 - Accurate HSL conversion */
     --primary-foreground: 0 0% 0%;
-    --primary-glow: 64 89% 27%;     /* #7e8a01 - Accurate HSL conversion */
+    --primary-glow: 65 98% 38%;     /* #afbf02 - New lighter green */
 
     --secondary: 0 0% 10%;
     --secondary-foreground: 0 0% 100%;
