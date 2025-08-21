@@ -1,101 +1,177 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import React from 'react';
+import { DashboardLayout } from '@/components/DashboardLayout';
+import { DashboardCard } from '@/components/DashboardCard';
+import { StatsCard } from '@/components/StatsCard';
 import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { ShoppingCart, Info } from 'lucide-react';
+import {
+  Theater,
+  Ticket,
+  ClipboardList,
+  BookOpen,
+  CreditCard,
+  Calendar,
+  Users,
+  Star,
+  MapPin,
+  Heart
+} from 'lucide-react';
 
 export default function B2CDashboard() {
-  const { profile, signOut } = useAuth();
+  const { profile } = useAuth();
+
+  const headerActions = (
+    <Button size="sm">
+      <ShoppingCart className="h-4 w-4 mr-2" />
+      Réserver maintenant
+    </Button>
+  );
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold text-primary mb-2">Billetterie Publique</h1>
-            <p className="text-muted-foreground">
-              Bienvenue, {profile?.first_name || 'Visiteur'}
-            </p>
-          </div>
-          <Button onClick={signOut} variant="outline">
-            Déconnexion
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Spectacles Disponibles</CardTitle>
-              <CardDescription>Découvrir notre programmation</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Voir les spectacles</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Réserver des Places</CardTitle>
-              <CardDescription>Choisir vos sièges et payer</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Réserver maintenant</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Mes Réservations</CardTitle>
-              <CardDescription>Voir vos achats et tickets</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Mes réservations</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Plan des Salles</CardTitle>
-              <CardDescription>Choisir vos sièges préférés</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Voir les plans</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Mon Profil</CardTitle>
-              <CardDescription>Gérer mes informations</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Modifier le profil</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Historique</CardTitle>
-              <CardDescription>Vos anciens achats</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Voir l'historique</Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        <Card className="mt-6 border-primary/20 bg-primary/5">
-          <CardHeader>
-            <CardTitle className="text-primary">Information Billetterie</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <p>• Paiement uniquement par carte CMI</p>
-              <p>• Sélection de sièges sur plan interactif</p>
-              <p>• Aucun remboursement - modifications possibles jusqu'à 27h avant le spectacle</p>
-              <p>• Tickets électroniques avec QR code</p>
-            </div>
-          </CardContent>
-        </Card>
+    <DashboardLayout 
+      title="Billetterie publique"
+      subtitle={`Bienvenue, ${profile?.full_name || profile?.first_name || 'Visiteur'}`}
+      headerActions={headerActions}
+    >
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatsCard
+          title="Réservations"
+          value="5"
+          icon={ClipboardList}
+          description="Billets achetés cette année"
+        />
+        <StatsCard
+          title="Spectacles vus"
+          value="12"
+          icon={Theater}
+          trend={{ value: 3, label: "ce mois" }}
+          description="Votre historique de spectacles"
+        />
+        <StatsCard
+          title="Note moyenne"
+          value="4.8/5"
+          icon={Star}
+          description="Votre satisfaction moyenne"
+        />
+        <StatsCard
+          title="Points fidélité"
+          value="240"
+          icon={Heart}
+          trend={{ value: 15, label: "ce mois" }}
+          description="Utilisables sur vos prochains achats"
+        />
       </div>
-    </div>
+
+      {/* Information Alert */}
+      <Alert className="mb-6 border-blue-200 bg-blue-50">
+        <Info className="h-4 w-4" />
+        <AlertDescription>
+          <strong>Billetterie en ligne :</strong> Paiement par carte CMI uniquement. 
+          Sélection de sièges interactive et tickets électroniques avec QR code.
+        </AlertDescription>
+      </Alert>
+
+      {/* Main Action Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <DashboardCard
+          title="Spectacles à l'affiche"
+          description="Découvrir notre programmation jeunesse"
+          icon={Theater}
+          href="/b2c/shows"
+          buttonText="Voir les spectacles"
+          gradient={true}
+          badge="8 spectacles"
+        />
+
+        <DashboardCard
+          title="Réserver des places"
+          description="Choisir vos sièges et payer en ligne"
+          icon={ShoppingCart}
+          href="/b2c/booking"
+          buttonText="Réserver maintenant"
+          badge="Places disponibles"
+          badgeVariant="secondary"
+        />
+
+        <DashboardCard
+          title="Mes réservations"
+          description="Voir vos achats et télécharger vos tickets"
+          icon={ClipboardList}
+          href="/b2c/bookings"
+          buttonText="Mes réservations"
+          badge="5 billets"
+        />
+      </div>
+
+      {/* Service Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <DashboardCard
+          title="Plan des salles"
+          description="Choisir vos sièges préférés"
+          icon={MapPin}
+          href="/b2c/seating"
+          buttonText="Voir les plans"
+        />
+
+        <DashboardCard
+          title="Programme détaillé"
+          description="Horaires et descriptions des spectacles"
+          icon={BookOpen}
+          href="/b2c/program"
+          buttonText="Consulter"
+        />
+
+        <DashboardCard
+          title="Mes paiements"
+          description="Historique et reçus de paiement"
+          icon={CreditCard}
+          href="/b2c/payments"
+          buttonText="Voir les paiements"
+        />
+
+        <DashboardCard
+          title="Calendrier"
+          description="Toutes les dates de spectacles"
+          icon={Calendar}
+          href="/b2c/calendar"
+          buttonText="Voir le calendrier"
+        />
+      </div>
+
+      {/* Loyalty and Family Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <DashboardCard
+          title="Programme fidélité"
+          description="Profitez de réductions et avantages exclusifs"
+          icon={Heart}
+          href="/b2c/loyalty"
+          buttonText="Voir mes avantages"
+          gradient={true}
+        >
+          <div className="space-y-2 text-sm text-muted-foreground">
+            <p>• 240 points disponibles</p>
+            <p>• Prochaine récompense : billet gratuit (300 points)</p>
+            <p>• Réduction famille : -15% dès 4 billets</p>
+          </div>
+        </DashboardCard>
+
+        <DashboardCard
+          title="Mes préférences"
+          description="Personnaliser votre expérience et notifications"
+          icon={Users}
+          href="/b2c/preferences"
+          buttonText="Gérer mes préférences"
+        >
+          <div className="space-y-2 text-sm text-muted-foreground">
+            <p>• Âges préférés : 6-10 ans</p>
+            <p>• Notifications : Email + WhatsApp</p>
+            <p>• Sièges préférés : Centre, rangées 5-8</p>
+          </div>
+        </DashboardCard>
+      </div>
+    </DashboardLayout>
   );
 }

@@ -1,112 +1,113 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
+import React from 'react';
+import { DashboardLayout } from '@/components/DashboardLayout';
+import { DashboardCard } from '@/components/DashboardCard';
+import { StatsCard } from '@/components/StatsCard';
 import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { Plus, Heart } from 'lucide-react';
+import {
+  Theater,
+  Ticket,
+  ClipboardList,
+  Users,
+  Calendar,
+  FileText
+} from 'lucide-react';
 
 export default function AssociationDashboard() {
-  const { profile, signOut } = useAuth();
+  const { profile } = useAuth();
+
+  const headerActions = (
+    <Button size="sm">
+      <Plus className="h-4 w-4 mr-2" />
+      Nouvelle réservation
+    </Button>
+  );
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-6xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-4xl font-bold text-primary mb-2">Portail Association</h1>
-            <div className="flex items-center gap-2">
-              <p className="text-muted-foreground">
-                Bienvenue, {profile?.first_name || 'Association'}
-              </p>
-              <Badge variant={profile?.is_verified ? "default" : "secondary"}>
-                {profile?.is_verified ? 'Vérifiée' : 'En attente de vérification'}
-              </Badge>
-            </div>
-          </div>
-          <Button onClick={signOut} variant="outline">
-            Déconnexion
-          </Button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Spectacles Disponibles</CardTitle>
-              <CardDescription>Voir la programmation</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Consulter les spectacles</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Demander des Places</CardTitle>
-              <CardDescription>Places gratuites après vérification</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button 
-                className="w-full" 
-                disabled={!profile?.is_verified}
-              >
-                {profile?.is_verified ? 'Demander des places' : 'Vérification requise'}
-              </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Mes Réservations</CardTitle>
-              <CardDescription>Voir vos réservations</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Voir mes réservations</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Accompagnateurs</CardTitle>
-              <CardDescription>Gérer vos accompagnateurs (max 5)</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Gérer les accompagnateurs</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Mon Association</CardTitle>
-              <CardDescription>Informations et vérification</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Voir les infos</Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Historique</CardTitle>
-              <CardDescription>Vos anciennes réservations</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Voir l'historique</Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        {!profile?.is_verified && (
-          <Card className="mt-6 border-destructive/20 bg-destructive/5">
-            <CardHeader>
-              <CardTitle className="text-destructive">Vérification Requise</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Votre association doit être vérifiée avant de pouvoir réserver des places gratuites. 
-                Veuillez contacter l'administration avec vos documents officiels.
-              </p>
-            </CardContent>
-          </Card>
-        )}
+    <DashboardLayout 
+      title="Portail association"
+      subtitle={`Bienvenue, ${profile?.full_name || profile?.contact_person || 'Association'}`}
+      headerActions={headerActions}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatsCard
+          title="Réservations actives"
+          value="2"
+          icon={ClipboardList}
+          description="Places confirmées"
+        />
+        <StatsCard
+          title="Bénéficiaires"
+          value="85"
+          icon={Users}
+          description="Enfants accompagnés"
+        />
+        <StatsCard
+          title="Spectacles vus"
+          value="6"
+          icon={Theater}
+          description="Cette année"
+        />
+        <StatsCard
+          title="Accompagnateurs"
+          value="5"
+          icon={Users}
+          description="Maximum autorisé"
+        />
       </div>
-    </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <DashboardCard
+          title="Spectacles disponibles"
+          description="Programmation par tranche d'âge"
+          icon={Theater}
+          href="/association/shows"
+          buttonText="Voir les spectacles"
+          gradient={true}
+        />
+
+        <DashboardCard
+          title="Nouvelle réservation"
+          description="Places gratuites pour vos bénéficiaires"
+          icon={Ticket}
+          href="/association/new-booking"
+          buttonText="Réserver"
+          badge="Gratuit"
+        />
+
+        <DashboardCard
+          title="Mes réservations"
+          description="Suivre vos réservations"
+          icon={ClipboardList}
+          href="/association/bookings"
+          buttonText="Mes réservations"
+        />
+
+        <DashboardCard
+          title="Mon association"
+          description="Informations et vérification"
+          icon={Heart}
+          href="/association/info"
+          buttonText="Voir les infos"
+        />
+
+        <DashboardCard
+          title="Accompagnateurs"
+          description="Gérer les adultes (max 5)"
+          icon={Users}
+          href="/association/chaperones"
+          buttonText="Gérer"
+        />
+
+        <DashboardCard
+          title="Documents"
+          description="Attestations et autorisations"
+          icon={FileText}
+          href="/association/documents"
+          buttonText="Mes documents"
+        />
+      </div>
+    </DashboardLayout>
   );
 }

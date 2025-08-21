@@ -10,12 +10,19 @@ interface Profile {
   email: string;
   first_name: string | null;
   last_name: string | null;
+  full_name: string | null;
   name: string | null;
   phone: string | null;
   whatsapp: string | null;
   role: 'admin' | 'teacher_private' | 'teacher_public' | 'association' | 'partner' | 'b2c_user' | 'super_admin';
   organization_id: string | null;
   is_verified: boolean;
+  verification_status: string | null;
+  professional_email: string | null;
+  address: string | null;
+  city: string | null;
+  school_id: string | null;
+  association_id: string | null;
 }
 
 interface AuthContextType {

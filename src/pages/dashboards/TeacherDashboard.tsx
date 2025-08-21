@@ -1,117 +1,196 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import React from 'react';
+import { DashboardLayout } from '@/components/DashboardLayout';
+import { DashboardCard } from '@/components/DashboardCard';
+import { StatsCard } from '@/components/StatsCard';
+import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { useAuth } from '@/hooks/useAuth';
-import { Navigation } from '@/components/Navigation';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Plus, Info } from 'lucide-react';
+import {
+  Theater,
+  Ticket,
+  ClipboardList,
+  GraduationCap,
+  FileText,
+  Calendar,
+  Users,
+  BookOpen,
+  AlertCircle
+} from 'lucide-react';
 
 export default function TeacherDashboard() {
   const { profile } = useAuth();
-
+  
   const isPrivateTeacher = profile?.role === 'teacher_private';
   const isPublicTeacher = profile?.role === 'teacher_public';
+  const schoolType = isPrivateTeacher ? 'privée' : 'publique';
+
+  const headerActions = (
+    <div className="flex gap-2 items-center">
+      <Badge variant={isPrivateTeacher ? "default" : "secondary"} className="text-xs">
+        École {schoolType}
+      </Badge>
+      <Button size="sm">
+        <Plus className="h-4 w-4 mr-2" />
+        Nouvelle réservation
+      </Button>
+    </div>
+  );
 
   return (
-    <div className="min-h-screen bg-background flex">
-      <Navigation />
-      
-      <main className="flex-1 p-6">
-        <Breadcrumbs />
-        
-        <div className="max-w-6xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-4xl font-bold text-primary mb-2">Portail Enseignant</h1>
-            <div className="flex items-center gap-2">
-              <p className="text-muted-foreground">
-                Bienvenue, {profile?.first_name || profile?.name || 'Enseignant'}
-              </p>
-              <Badge variant={isPrivateTeacher ? "default" : "secondary"}>
-                {isPrivateTeacher ? 'École Privée' : 'École Publique'}
-              </Badge>
-            </div>
-          </div>
+    <DashboardLayout 
+      title="Portail enseignant"
+      subtitle={`Bienvenue, ${profile?.full_name || profile?.first_name || 'Enseignant'} - École ${schoolType}`}
+      headerActions={headerActions}
+    >
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatsCard
+          title="Réservations actives"
+          value="3"
+          icon={ClipboardList}
+          description="2 confirmées, 1 en attente"
+        />
+        <StatsCard
+          title="Élèves inscrits"
+          value="127"
+          icon={Users}
+          trend={{ value: 5, label: "cette semaine" }}
+          description="Participants aux spectacles"
+        />
+        <StatsCard
+          title="Spectacles vus"
+          value="8"
+          icon={Theater}
+          description="Cette année scolaire"
+        />
+        <StatsCard
+          title={isPrivateTeacher ? "Budget restant" : "Places disponibles"}
+          value={isPrivateTeacher ? "2,450 DH" : "47"}
+          icon={isPrivateTeacher ? FileText : Ticket}
+          description={isPrivateTeacher ? "Budget annuel" : "Places gratuites restantes"}
+        />
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Spectacles Disponibles</CardTitle>
-              <CardDescription>Voir la programmation</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Consulter les spectacles</Button>
-            </CardContent>
-          </Card>
+      {/* Info Alert for Public Schools */}
+      {isPublicTeacher && (
+        <Alert className="mb-6 border-blue-200 bg-blue-50">
+          <Info className="h-4 w-4" />
+          <AlertDescription>
+            <strong>École Publique :</strong> Vous bénéficiez de 50 places gratuites par session. 
+            Aucun ticket n'est généré - seul un registre de présence est nécessaire.
+          </AlertDescription>
+        </Alert>
+      )}
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Nouvelle Réservation</CardTitle>
-              <CardDescription>
-                {isPrivateTeacher ? 'Réserver pour votre école' : 'Demander des places gratuites'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Faire une réservation</Button>
-            </CardContent>
-          </Card>
+      {/* Main Action Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <DashboardCard
+          title="Spectacles disponibles"
+          description="Découvrir la programmation adaptée à votre classe"
+          icon={Theater}
+          href="/teacher/shows"
+          buttonText="Voir les spectacles"
+          gradient={true}
+          badge="12 spectacles"
+        />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Mes Réservations</CardTitle>
-              <CardDescription>Voir vos réservations en cours</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Voir mes réservations</Button>
-            </CardContent>
-          </Card>
+        <DashboardCard
+          title="Nouvelle réservation"
+          description={isPrivateTeacher ? 
+            "Réserver pour votre école avec devis personnalisé" : 
+            "Demander vos places gratuites pour une session"
+          }
+          icon={Ticket}
+          href={isPrivateTeacher ? "/teacher/new-booking" : "/teacher/public-booking"}
+          buttonText="Réserver maintenant"
+          badge={isPrivateTeacher ? "Devis requis" : "Gratuit"}
+          badgeVariant={isPrivateTeacher ? "default" : "secondary"}
+        />
 
-          {isPrivateTeacher && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Devis en Attente</CardTitle>
-                <CardDescription>Confirmer vos devis</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button className="w-full">Voir les devis</Button>
-              </CardContent>
-            </Card>
-          )}
+        <DashboardCard
+          title="Mes réservations"
+          description="Suivre vos réservations en cours et confirmées"
+          icon={ClipboardList}
+          href="/teacher/bookings"
+          buttonText="Voir mes réservations"
+          badge="3 actives"
+          badgeVariant="secondary"
+        />
+      </div>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Mon Organisation</CardTitle>
-              <CardDescription>Informations de votre école</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Voir les infos</Button>
-            </CardContent>
-          </Card>
+      {/* School-specific Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <DashboardCard
+          title="Mon école"
+          description="Informations et statistiques de votre établissement"
+          icon={GraduationCap}
+          href="/teacher/school"
+          buttonText="Voir les infos"
+        />
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Historique</CardTitle>
-              <CardDescription>Vos anciennes réservations</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full">Voir l'historique</Button>
-            </CardContent>
-          </Card>
-        </div>
-
-        {isPublicTeacher && (
-          <Card className="mt-6 border-primary/20 bg-primary/5">
-            <CardHeader>
-              <CardTitle className="text-primary">Information École Publique</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                En tant qu'école publique, vous bénéficiez de 50 places gratuites par session. 
-                Aucun ticket n'est généré - seul un registre de présence est nécessaire.
-              </p>
-            </CardContent>
-          </Card>
+        {isPrivateTeacher && (
+          <DashboardCard
+            title="Devis en attente"
+            description="Confirmer vos devis et procéder aux paiements"
+            icon={FileText}
+            href="/teacher/quotes"
+            buttonText="Voir les devis"
+            badge="2 en attente"
+            badgeVariant="destructive"
+          />
         )}
+
+        <DashboardCard
+          title="Calendrier scolaire"
+          description="Planning des spectacles et disponibilités"
+          icon={Calendar}
+          href="/teacher/calendar"
+          buttonText="Voir le calendrier"
+        />
+
+        <DashboardCard
+          title="Ressources pédagogiques"
+          description="Guides et fiches d'accompagnement des spectacles"
+          icon={BookOpen}
+          href="/teacher/resources"
+          buttonText="Accéder aux ressources"
+        />
+      </div>
+
+      {/* Private School Features */}
+      {isPrivateTeacher && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <DashboardCard
+            title="Gestion financière"
+            description="Suivi des paiements, factures et budget annuel"
+            icon={FileText}
+            href="/teacher/finance"
+            buttonText="Voir les finances"
+          >
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <p>• Budget total : 5,000 DH</p>
+              <p>• Dépensé : 2,550 DH</p>
+              <p>• Restant : 2,450 DH</p>
+            </div>
+          </DashboardCard>
+
+          <DashboardCard
+            title="Historique des spectacles"
+            description="Tous vos spectacles de l'année avec évaluations"
+            icon={Theater}
+            href="/teacher/history"
+            buttonText="Voir l'historique"
+          >
+            <div className="space-y-2 text-sm text-muted-foreground">
+              <p>• 8 spectacles cette année</p>
+              <p>• Note moyenne : 4.6/5</p>
+              <p>• 347 élèves participants</p>
+            </div>
+          </DashboardCard>
         </div>
-      </main>
-    </div>
+      )}
+    </DashboardLayout>
   );
 }
