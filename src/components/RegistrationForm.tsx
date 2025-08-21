@@ -249,45 +249,45 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
     switch (currentStep) {
       case 1:
         return (
-          <div className="space-y-8 animate-fade-in">
-            <div className="text-center space-y-4">
-              <h1 className="text-4xl font-bold text-foreground">Quel est votre profil ?</h1>
-              <p className="text-xl text-muted-foreground">Choisissez la catégorie qui vous correspond</p>
+          <div className="w-full max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h1 className="text-5xl font-bold text-foreground mb-4">Choisissez votre profil</h1>
+              <p className="text-2xl text-muted-foreground">Quelle catégorie vous correspond ?</p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div className="grid grid-cols-2 gap-12">
               <button
-                className={`p-8 rounded-2xl border-2 transition-all duration-200 hover:scale-[1.02] ${
+                className={`p-12 rounded-3xl border-2 transition-all duration-300 hover:scale-[1.02] ${
                   userCategory === 'b2c' 
-                    ? 'border-primary bg-primary/5 shadow-lg' 
-                    : 'border-border hover:border-primary/50'
+                    ? 'border-primary bg-primary/10 shadow-2xl' 
+                    : 'border-gray-200 hover:border-primary/50 hover:shadow-lg'
                 }`}
                 onClick={() => {
                   setUserCategory('b2c');
                   setUserType('b2c');
                 }}
               >
-                <User className="h-16 w-16 mx-auto mb-4 text-primary" />
-                <h3 className="text-2xl font-semibold mb-2">Particulier</h3>
-                <p className="text-muted-foreground mb-4">Parents et familles souhaitant acheter des billets</p>
-                <div className="inline-flex items-center px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-medium">
-                  <Check className="h-4 w-4 mr-1" />
+                <User className="h-24 w-24 mx-auto mb-6 text-primary" />
+                <h3 className="text-3xl font-bold mb-4">Particulier</h3>
+                <p className="text-lg text-muted-foreground mb-6">Parents et familles souhaitant acheter des billets individuellement</p>
+                <div className="inline-flex items-center px-6 py-3 rounded-full bg-green-100 text-green-700 text-lg font-semibold">
+                  <Check className="h-5 w-5 mr-2" />
                   Accès immédiat
                 </div>
               </button>
 
               <button
-                className={`p-8 rounded-2xl border-2 transition-all duration-200 hover:scale-[1.02] ${
+                className={`p-12 rounded-3xl border-2 transition-all duration-300 hover:scale-[1.02] ${
                   userCategory === 'b2b' 
-                    ? 'border-primary bg-primary/5 shadow-lg' 
-                    : 'border-border hover:border-primary/50'
+                    ? 'border-primary bg-primary/10 shadow-2xl' 
+                    : 'border-gray-200 hover:border-primary/50 hover:shadow-lg'
                 }`}
                 onClick={() => setUserCategory('b2b')}
               >
-                <Building2 className="h-16 w-16 mx-auto mb-4 text-primary" />
-                <h3 className="text-2xl font-semibold mb-2">Professionnel</h3>
-                <p className="text-muted-foreground mb-4">Enseignants, associations et organismes éducatifs</p>
-                <div className="inline-flex items-center px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-sm font-medium">
+                <Building2 className="h-24 w-24 mx-auto mb-6 text-primary" />
+                <h3 className="text-3xl font-bold mb-4">Professionnel</h3>
+                <p className="text-lg text-muted-foreground mb-6">Enseignants, associations et organismes éducatifs</p>
+                <div className="inline-flex items-center px-6 py-3 rounded-full bg-blue-100 text-blue-700 text-lg font-semibold">
                   Tarifs préférentiels
                 </div>
               </button>
@@ -298,50 +298,50 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
       case 2:
         if (userCategory === 'b2b') {
           return (
-            <div className="space-y-8 animate-fade-in">
-              <div className="text-center space-y-4">
-                <h1 className="text-4xl font-bold text-foreground">Précisez votre profil</h1>
-                <p className="text-xl text-muted-foreground">Quel type d'organisation représentez-vous ?</p>
+            <div className="w-full max-w-7xl mx-auto">
+              <div className="text-center mb-12">
+                <h1 className="text-5xl font-bold text-foreground mb-4">Précisez votre profil</h1>
+                <p className="text-2xl text-muted-foreground">Quel type d'organisation représentez-vous ?</p>
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+              <div className="grid grid-cols-3 gap-8">
                 <button
-                  className={`p-6 rounded-2xl border-2 transition-all duration-200 hover:scale-[1.02] ${
+                  className={`p-10 rounded-3xl border-2 transition-all duration-300 hover:scale-[1.02] ${
                     userType === 'teacher_private' 
-                      ? 'border-primary bg-primary/5 shadow-lg' 
-                      : 'border-border hover:border-primary/50'
+                      ? 'border-primary bg-primary/10 shadow-2xl' 
+                      : 'border-gray-200 hover:border-primary/50 hover:shadow-lg'
                   }`}
                   onClick={() => setUserType('teacher_private')}
                 >
-                  <GraduationCap className="h-12 w-12 mx-auto mb-4 text-primary" />
-                  <h3 className="text-xl font-semibold mb-2">École Privée</h3>
-                  <p className="text-sm text-muted-foreground">Vérification par email du domaine</p>
+                  <GraduationCap className="h-20 w-20 mx-auto mb-6 text-primary" />
+                  <h3 className="text-2xl font-bold mb-4">École Privée</h3>
+                  <p className="text-base text-muted-foreground">Vérification par email du domaine</p>
                 </button>
 
                 <button
-                  className={`p-6 rounded-2xl border-2 transition-all duration-200 hover:scale-[1.02] ${
+                  className={`p-10 rounded-3xl border-2 transition-all duration-300 hover:scale-[1.02] ${
                     userType === 'teacher_public' 
-                      ? 'border-primary bg-primary/5 shadow-lg' 
-                      : 'border-border hover:border-primary/50'
+                      ? 'border-primary bg-primary/10 shadow-2xl' 
+                      : 'border-gray-200 hover:border-primary/50 hover:shadow-lg'
                   }`}
                   onClick={() => setUserType('teacher_public')}
                 >
-                  <GraduationCap className="h-12 w-12 mx-auto mb-4 text-accent" />
-                  <h3 className="text-xl font-semibold mb-2">École Publique</h3>
-                  <p className="text-sm text-muted-foreground">Documents officiels requis</p>
+                  <GraduationCap className="h-20 w-20 mx-auto mb-6 text-accent" />
+                  <h3 className="text-2xl font-bold mb-4">École Publique</h3>
+                  <p className="text-base text-muted-foreground">Documents officiels requis</p>
                 </button>
 
                 <button
-                  className={`p-6 rounded-2xl border-2 transition-all duration-200 hover:scale-[1.02] ${
+                  className={`p-10 rounded-3xl border-2 transition-all duration-300 hover:scale-[1.02] ${
                     userType === 'association' 
-                      ? 'border-primary bg-primary/5 shadow-lg' 
-                      : 'border-border hover:border-primary/50'
+                      ? 'border-primary bg-primary/10 shadow-2xl' 
+                      : 'border-gray-200 hover:border-primary/50 hover:shadow-lg'
                   }`}
                   onClick={() => setUserType('association')}
                 >
-                  <Users className="h-12 w-12 mx-auto mb-4 text-primary" />
-                  <h3 className="text-xl font-semibold mb-2">Association</h3>
-                  <p className="text-sm text-muted-foreground">Organisation à but non lucratif</p>
+                  <Users className="h-20 w-20 mx-auto mb-6 text-primary" />
+                  <h3 className="text-2xl font-bold mb-4">Association</h3>
+                  <p className="text-base text-muted-foreground">Organisation à but non lucratif</p>
                 </button>
               </div>
             </div>
@@ -351,61 +351,65 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
       case 3:
         if (userCategory === 'b2c' || (userCategory === 'b2b' && currentStep === 3)) {
           return (
-            <div className="space-y-8 animate-fade-in">
-              <div className="text-center space-y-4">
-                <h1 className="text-4xl font-bold text-foreground">Vos informations</h1>
-                <p className="text-xl text-muted-foreground">Quelques détails pour créer votre compte</p>
+            <div className="w-full max-w-5xl mx-auto">
+              <div className="text-center mb-12">
+                <h1 className="text-5xl font-bold text-foreground mb-4">Vos informations</h1>
+                <p className="text-2xl text-muted-foreground">Quelques détails pour créer votre compte</p>
               </div>
               
-              <div className="max-w-md mx-auto space-y-6">
-                <div>
-                  <Label htmlFor="fullName" className="text-lg font-medium">Nom complet *</Label>
-                  <Input
-                    id="fullName"
-                    value={formData.fullName}
-                    onChange={(e) => setFormData(prev => ({...prev, fullName: e.target.value}))}
-                    className="mt-2 h-12 text-lg"
-                    placeholder="Votre nom complet"
-                    required
-                  />
+              <div className="grid grid-cols-2 gap-12">
+                <div className="space-y-8">
+                  <div>
+                    <Label htmlFor="fullName" className="text-xl font-semibold mb-3 block">Nom complet *</Label>
+                    <Input
+                      id="fullName"
+                      value={formData.fullName}
+                      onChange={(e) => setFormData(prev => ({...prev, fullName: e.target.value}))}
+                      className="h-14 text-lg"
+                      placeholder="Votre nom complet"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <Label htmlFor="email" className="text-xl font-semibold mb-3 block">Email *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => setFormData(prev => ({...prev, email: e.target.value}))}
+                      className="h-14 text-lg"
+                      placeholder="votre@email.com"
+                      required
+                    />
+                  </div>
                 </div>
 
-                <div>
-                  <Label htmlFor="email" className="text-lg font-medium">Email *</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={(e) => setFormData(prev => ({...prev, email: e.target.value}))}
-                    className="mt-2 h-12 text-lg"
-                    placeholder="votre@email.com"
-                    required
-                  />
-                </div>
+                <div className="space-y-8">
+                  <div>
+                    <Label htmlFor="phone" className="text-xl font-semibold mb-3 block">Téléphone *</Label>
+                    <Input
+                      id="phone"
+                      type="tel"
+                      value={formData.phone}
+                      onChange={(e) => setFormData(prev => ({...prev, phone: e.target.value}))}
+                      className="h-14 text-lg"
+                      placeholder="+212 6XX XX XX XX"
+                      required
+                    />
+                  </div>
 
-                <div>
-                  <Label htmlFor="phone" className="text-lg font-medium">Téléphone *</Label>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={formData.phone}
-                    onChange={(e) => setFormData(prev => ({...prev, phone: e.target.value}))}
-                    className="mt-2 h-12 text-lg"
-                    placeholder="+212 6XX XX XX XX"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="whatsapp" className="text-lg font-medium">WhatsApp (optionnel)</Label>
-                  <Input
-                    id="whatsapp"
-                    type="tel"
-                    value={formData.whatsapp}
-                    onChange={(e) => setFormData(prev => ({...prev, whatsapp: e.target.value}))}
-                    className="mt-2 h-12 text-lg"
-                    placeholder="Par défaut: même que téléphone"
-                  />
+                  <div>
+                    <Label htmlFor="whatsapp" className="text-xl font-semibold mb-3 block">WhatsApp (optionnel)</Label>
+                    <Input
+                      id="whatsapp"
+                      type="tel"
+                      value={formData.whatsapp}
+                      onChange={(e) => setFormData(prev => ({...prev, whatsapp: e.target.value}))}
+                      className="h-14 text-lg"
+                      placeholder="Par défaut: même que téléphone"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -413,34 +417,34 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
         }
       case 4:
         return (
-          <div className="space-y-8 animate-fade-in">
-            <div className="text-center space-y-4">
-              <h1 className="text-4xl font-bold text-foreground">Mot de passe</h1>
-              <p className="text-xl text-muted-foreground">Sécurisez votre compte</p>
+          <div className="w-full max-w-4xl mx-auto">
+            <div className="text-center mb-12">
+              <h1 className="text-5xl font-bold text-foreground mb-4">Sécurisez votre compte</h1>
+              <p className="text-2xl text-muted-foreground">Créez un mot de passe fort</p>
             </div>
             
-            <div className="max-w-md mx-auto space-y-6">
+            <div className="grid grid-cols-2 gap-12">
               <div>
-                <Label htmlFor="password" className="text-lg font-medium">Mot de passe *</Label>
+                <Label htmlFor="password" className="text-xl font-semibold mb-3 block">Mot de passe *</Label>
                 <Input
                   id="password"
                   type="password"
                   value={formData.password}
                   onChange={(e) => setFormData(prev => ({...prev, password: e.target.value}))}
-                  className="mt-2 h-12 text-lg"
+                  className="h-14 text-lg"
                   placeholder="Votre mot de passe"
                   required
                 />
               </div>
 
               <div>
-                <Label htmlFor="confirmPassword" className="text-lg font-medium">Confirmer le mot de passe *</Label>
+                <Label htmlFor="confirmPassword" className="text-xl font-semibold mb-3 block">Confirmer le mot de passe *</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData(prev => ({...prev, confirmPassword: e.target.value}))}
-                  className="mt-2 h-12 text-lg"
+                  className="h-14 text-lg"
                   placeholder="Confirmez votre mot de passe"
                   required
                 />
@@ -636,8 +640,8 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex items-center justify-center p-6">
-        <div className="w-full max-w-4xl">
+      <div className="flex-1 flex items-center justify-center p-8">
+        <div className="w-full">
           {renderStep()}
         </div>
       </div>
