@@ -834,43 +834,83 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
   const progress = (step / maxSteps) * 100;
 
   return (
-    <div className="w-full max-w-6xl mx-auto p-6">
-      {/* Progress bar */}
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-3">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4 relative overflow-hidden">
+      {/* Enhanced animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-br from-primary/8 to-transparent rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-128 h-128 bg-gradient-to-br from-accent/6 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-gradient-to-br from-primary-glow/6 to-transparent rounded-full blur-2xl animate-pulse" style={{ animationDelay: '4s' }} />
+        <div className="absolute top-3/4 left-1/3 w-48 h-48 bg-gradient-to-br from-accent/4 to-transparent rounded-full blur-2xl animate-pulse" style={{ animationDelay: '6s' }} />
+      </div>
+      
+      {/* Stylized back button */}
+      <div className="absolute top-6 left-6 z-20">
+        <Button
+          variant="outline"
+          onClick={onBack}
+          className="flex items-center gap-2 backdrop-blur-xl bg-card/60 border-primary/20 hover:bg-primary/10 hover:border-primary/40 transition-all duration-300"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Retour à la connexion
+        </Button>
+      </div>
+
+      {/* Enhanced progress indicator */}
+      <div className="absolute top-6 right-6 z-20 bg-card/90 backdrop-blur-xl rounded-xl p-6 border border-primary/20 shadow-xl min-w-[240px]">
+        <div className="flex justify-between items-center mb-4">
           <span className="text-sm font-medium text-muted-foreground">Étape {step} sur {maxSteps}</span>
-          <span className="text-sm font-semibold text-primary">{Math.round(progress)}%</span>
+          <span className="text-lg font-bold text-primary">{Math.round(progress)}%</span>
         </div>
-        <div className="w-full bg-muted/30 rounded-full h-3 overflow-hidden">
+        <div className="w-full bg-muted/20 rounded-full h-4 overflow-hidden border border-primary/10">
           <div 
-            className="bg-gradient-to-r from-primary to-primary/80 h-full rounded-full transition-all duration-700 ease-in-out transform"
+            className="bg-gradient-to-r from-primary via-primary-glow to-primary h-full rounded-full transition-all duration-700 ease-in-out transform shadow-glow"
             style={{ width: `${progress}%` }}
           />
         </div>
+        <div className="flex justify-between mt-2 text-xs text-muted-foreground">
+          <span>Début</span>
+          <span>Terminé</span>
+        </div>
       </div>
 
-      {/* Main card */}
-      <Card className="w-full border-0 shadow-2xl bg-gradient-to-br from-card via-card to-card/95 backdrop-blur-sm overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
+      <div className="w-full max-w-6xl mx-auto relative z-10">
+
+      {/* Enhanced main card */}
+      <Card className="w-full border-0 shadow-elegant bg-card/95 backdrop-blur-xl overflow-hidden relative">
+        {/* Gradient overlay */}
+        <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/8 pointer-events-none" />
         
-        <CardHeader className="relative text-center pb-8 pt-10">
-          <div className="space-y-2">
-            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-primary via-primary/90 to-primary/70 bg-clip-text text-transparent animate-fade-in">
+        {/* Decorative elements */}
+        <div className="absolute top-0 left-0 w-32 h-32 bg-gradient-to-br from-primary/20 to-transparent rounded-full blur-2xl" />
+        <div className="absolute bottom-0 right-0 w-24 h-24 bg-gradient-to-br from-accent/20 to-transparent rounded-full blur-xl" />
+        
+        <CardHeader className="relative text-center pb-10 pt-12">
+          <div className="space-y-4">
+            {/* Icon indicator */}
+            <div className="w-16 h-16 mx-auto bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center shadow-glow mb-6">
+              {step === 1 && <User className="h-8 w-8 text-primary-foreground" />}
+              {step === 2 && userCategory === 'b2b' && <Building2 className="h-8 w-8 text-primary-foreground" />}
+              {step === 2 && userCategory === 'b2c' && <User className="h-8 w-8 text-primary-foreground" />}
+              {step === 3 && <GraduationCap className="h-8 w-8 text-primary-foreground" />}
+              {step === 4 && <Upload className="h-8 w-8 text-primary-foreground" />}
+            </div>
+            
+            <CardTitle className="text-5xl font-bold bg-gradient-to-r from-primary via-primary-glow to-primary bg-clip-text text-transparent animate-fade-in">
               {getStepTitle()}
             </CardTitle>
-            <div className="w-24 h-1 bg-gradient-to-r from-primary to-primary/60 mx-auto rounded-full" />
-            <CardDescription className="text-lg text-muted-foreground mt-4 max-w-2xl mx-auto leading-relaxed">
-              {step === 1 && "Commençons par identifier votre profil pour personnaliser votre expérience"}
-              {step === 2 && userCategory === 'b2b' && "Précisez votre type d'organisation pour des services adaptés"}
+            <div className="w-32 h-1.5 bg-gradient-to-r from-primary via-primary-glow to-primary mx-auto rounded-full shadow-glow" />
+            <CardDescription className="text-xl text-muted-foreground mt-6 max-w-3xl mx-auto leading-relaxed">
+              {step === 1 && "Commençons par identifier votre profil pour personnaliser votre expérience théâtrale"}
+              {step === 2 && userCategory === 'b2b' && "Précisez votre type d'organisation pour des services adaptés à vos besoins"}
               {step === 2 && userCategory === 'b2c' && "Vos informations personnelles pour finaliser votre compte"}
-              {step === 3 && userCategory === 'b2b' && "Vos informations personnelles pour compléter votre profil"}
+              {step === 3 && userCategory === 'b2b' && "Vos informations personnelles pour compléter votre profil professionnel"}
               {step === 3 && userCategory === 'b2c' && "Dernière étape pour finaliser votre inscription"}
               {step === 4 && "Informations spécifiques à votre organisation pour la validation"}
             </CardDescription>
           </div>
         </CardHeader>
         
-        <CardContent className="relative px-16 pb-12">
+        <CardContent className="relative px-20 pb-16">
           <div 
             className={`transition-all duration-500 ease-in-out transform ${
               isTransitioning 
@@ -913,6 +953,7 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 };

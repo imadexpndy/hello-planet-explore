@@ -145,20 +145,38 @@ const Auth = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100 p-4">
-      <div className={`w-full ${mode === 'register' ? 'max-w-none' : 'max-w-md'}`}>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-accent/5 p-4 relative overflow-hidden">
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-gradient-to-br from-primary/10 to-transparent rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-gradient-to-br from-accent/10 to-transparent rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-gradient-to-br from-primary-glow/10 to-transparent rounded-full blur-2xl animate-pulse" style={{ animationDelay: '4s' }} />
+      </div>
+      
+      <div className={`w-full relative z-10 ${mode === 'register' ? 'max-w-none' : 'max-w-md'}`}>
         {mode === 'login' && (
-          <Card>
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl font-bold">Connexion</CardTitle>
-              <CardDescription>
-                Connectez-vous à votre compte
+          <Card className="backdrop-blur-xl bg-card/80 border-primary/20 shadow-2xl">
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 rounded-xl pointer-events-none" />
+            
+            <CardHeader className="text-center relative pb-8 pt-12">
+              <div className="mb-6">
+                <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary to-primary-glow rounded-full flex items-center justify-center shadow-glow mb-4">
+                  <LogIn className="h-10 w-10 text-primary-foreground" />
+                </div>
+              </div>
+              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-primary via-primary to-primary-glow bg-clip-text text-transparent">
+                Connexion
+              </CardTitle>
+              <CardDescription className="text-lg text-muted-foreground mt-3">
+                Connectez-vous à votre espace personnel
               </CardDescription>
+              <div className="w-16 h-1 bg-gradient-to-r from-primary to-primary-glow mx-auto rounded-full mt-4" />
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleLogin} className="space-y-4">
-                <div>
-                  <Label htmlFor="email">Email</Label>
+            
+            <CardContent className="relative px-8 pb-8">
+              <form onSubmit={handleLogin} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="email" className="text-sm font-medium text-foreground">Email</Label>
                   <Input
                     id="email"
                     type="email"
@@ -166,10 +184,12 @@ const Auth = () => {
                     onChange={(e) => setEmail(e.target.value)}
                     required
                     disabled={loading}
+                    className="h-12 bg-background/60 border-2 border-muted focus:border-primary/50 focus:bg-background transition-all duration-300 rounded-lg"
+                    placeholder="votre@email.com"
                   />
                 </div>
-                <div>
-                  <Label htmlFor="password">Mot de passe</Label>
+                <div className="space-y-2">
+                  <Label htmlFor="password" className="text-sm font-medium text-foreground">Mot de passe</Label>
                   <Input
                     id="password"
                     type="password"
@@ -177,24 +197,37 @@ const Auth = () => {
                     onChange={(e) => setPassword(e.target.value)}
                     required
                     disabled={loading}
+                    className="h-12 bg-background/60 border-2 border-muted focus:border-primary/50 focus:bg-background transition-all duration-300 rounded-lg"
+                    placeholder="••••••••"
                   />
                 </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  <LogIn className="mr-2 h-4 w-4" />
-                  {loading ? 'Connexion...' : 'Se connecter'}
+                <Button 
+                  type="submit" 
+                  variant="glow"
+                  size="xl"
+                  className="w-full mt-8" 
+                  disabled={loading}
+                >
+                  <LogIn className="mr-3 h-5 w-5" />
+                  {loading ? 'Connexion en cours...' : 'Se connecter'}
                 </Button>
               </form>
 
-              <div className="mt-6 text-center">
-                <p className="text-sm text-muted-foreground">
-                  Pas encore de compte ?
-                </p>
+              <div className="mt-8 text-center">
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-muted" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-4 bg-card text-muted-foreground">Nouveau sur EDJS ?</span>
+                  </div>
+                </div>
                 <Button 
                   variant="outline" 
                   onClick={() => setMode('register')}
-                  className="mt-2"
+                  className="mt-6 w-full h-12 border-2 hover:border-primary/50 hover:bg-primary/5"
                 >
-                  <UserPlus className="mr-2 h-4 w-4" />
+                  <UserPlus className="mr-3 h-5 w-5" />
                   Créer un compte
                 </Button>
               </div>
