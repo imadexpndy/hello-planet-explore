@@ -10,7 +10,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { RegistrationForm } from '@/components/RegistrationForm';
 import { ConsentForm } from '@/components/ConsentForm';
 import { LogIn, UserPlus } from 'lucide-react';
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 const Auth = () => {
   const [mode, setMode] = useState<'login' | 'register' | 'consent'>('login');
   const [email, setEmail] = useState('');
@@ -20,6 +20,9 @@ const Auth = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [showAdminSetup, setShowAdminSetup] = useState(false);
+  const [setupToken, setSetupToken] = useState('');
+  const [adminFullName, setAdminFullName] = useState('Administrator');
 
   useEffect(() => {
     if (user) {
@@ -126,6 +129,34 @@ const Auth = () => {
         description: "Une erreur inattendue s'est produite",
         variant: "destructive"
       });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const createAdmin = async () => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.functions.invoke('create-admin', {
+        body: { email, password, full_name: adminFullName },
+        headers: { 'x-admin-setup-token': setupToken },
+      } as any);
+
+      if (error) throw error;
+
+      toast({
+        title: "Admin créé",
+        description: "L'administrateur a été créé avec succès.",
+      });
+      setShowAdminSetup(false);
+
+      // Tente une connexion immédiate
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) {
+        toast({ title: "Connexion requise", description: "Admin créé, veuillez vous connecter.", variant: "default" });
+      }
+    } catch (err: any) {
+      toast({ title: "Erreur de création admin", description: err.message || "Échec de la création", variant: "destructive" });
     } finally {
       setLoading(false);
     }
@@ -239,6 +270,14 @@ const Auth = () => {
                   <UserPlus className="mr-3 h-5 w-5" />
                   Créer un compte
                 </Button>
+                <button
+                  type="button"
+                  onClick={() => setShowAdminSetup(true)}
+                  className="mt-3 text-xs text-muted-foreground hover:text-foreground underline"
+                  aria-label="Configurer l'administrateur"
+                >
+                  Créer l'admin (setup)
+                </button>
               </div>
             </CardContent>
           </Card>
@@ -248,6 +287,44 @@ const Auth = () => {
           <RegistrationForm onBack={() => setMode('login')} />
         )}
       </div>
+
+      <Dialog open={showAdminSetup} onOpenChange={setShowAdminSetup}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Créer l'administrateur</DialogTitle>
+            <DialogDescription>
+              Utilisera l'email et le mot de passe saisis ci-dessus. Entrez le token de configuration pour valider.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="setup-token">Token de configuration</Label>
+              <Input
+                id="setup-token"
+                type="password"
+                value={setupToken}
+                onChange={(e) => setSetupToken(e.target.value)}
+                placeholder="Collez le token ADMIN_SETUP_TOKEN"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="full-name">Nom complet (optionnel)</Label>
+              <Input
+                id="full-name"
+                value={adminFullName}
+                onChange={(e) => setAdminFullName(e.target.value)}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowAdminSetup(false)}>Annuler</Button>
+            <Button variant="glow" onClick={createAdmin} disabled={loading || !setupToken || !email || !password}>
+              {loading ? 'Création...' : "Créer l'admin"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </div>
   );
 };
