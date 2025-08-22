@@ -339,12 +339,34 @@ export default function AdminApiKeys() {
             
             <div>
               <h4 className="font-medium mb-2">Endpoints disponibles</h4>
-              <div className="space-y-2 text-sm">
-                <p><code>GET /spectacles</code> - Liste des spectacles</p>
-                <p><code>GET /sessions</code> - Liste des sessions</p>
-                <p><code>GET /bookings</code> - Liste des réservations</p>
-                <p><code>GET /users</code> - Liste des utilisateurs</p>
-                <p><code>POST /notifications</code> - Envoyer des notifications</p>
+              <div className="space-y-3 text-sm">
+                <div>
+                  <h5 className="font-medium text-green-600 mb-1">📱 Endpoints Mobile App (GET - Recevoir des données)</h5>
+                  <div className="space-y-1 ml-4">
+                    <p><code>GET /spectacles</code> - Liste des spectacles disponibles</p>
+                    <p><code>GET /spectacles/{`{id}`}</code> - Détails d'un spectacle</p>
+                    <p><code>GET /sessions</code> - Sessions disponibles</p>
+                    <p><code>GET /sessions/{`{id}`}</code> - Détails d'une session</p>
+                    <p><code>GET /users/{`{userId}`}</code> - Profil utilisateur</p>
+                    <p><code>GET /bookings</code> - Réservations utilisateur</p>
+                    <p><code>GET /bookings/{`{id}`}</code> - Détails d'une réservation</p>
+                  </div>
+                </div>
+                <div>
+                  <h5 className="font-medium text-blue-600 mb-1">📱 Endpoints Mobile App (POST - Envoyer des données)</h5>
+                  <div className="space-y-1 ml-4">
+                    <p><code>POST /bookings</code> - Créer une réservation</p>
+                    <p><code>POST /users</code> - Inscription/mise à jour profil</p>
+                  </div>
+                </div>
+                <div>
+                  <h5 className="font-medium text-orange-600 mb-1">🖥️ Endpoints Platform Admin (POST - Contrôle total)</h5>
+                  <div className="space-y-1 ml-4">
+                    <p><code>POST /spectacles</code> - Créer des spectacles</p>
+                    <p><code>POST /sessions</code> - Créer des sessions</p>
+                    <p><code>POST /notifications</code> - Envoyer des notifications</p>
+                  </div>
+                </div>
               </div>
             </div>
           </CardContent>

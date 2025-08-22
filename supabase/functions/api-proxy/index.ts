@@ -98,8 +98,8 @@ async function handleSpectaclesAPI(req: Request, supabase: any, path: string, pe
     return { success: true, data };
   }
   
+  // Only platform admins can create/modify spectacles
   if (method === 'POST' && permissions.full_access) {
-    // Create new spectacle
     const body = await req.json();
     const { data, error } = await supabase
       .from('spectacles')
@@ -135,6 +135,7 @@ async function handleSessionsAPI(req: Request, supabase: any, path: string, perm
     return { success: true, data };
   }
   
+  // Only platform admins can create/modify sessions
   if (method === 'POST' && permissions.full_access) {
     const body = await req.json();
     const { data, error } = await supabase
@@ -172,7 +173,8 @@ async function handleBookingsAPI(req: Request, supabase: any, path: string, perm
     return { success: true, data };
   }
   
-  if (method === 'POST' && permissions.full_access) {
+  // Mobile app can create bookings
+  if (method === 'POST') {
     const body = await req.json();
     const { data, error } = await supabase
       .from('bookings')
@@ -184,7 +186,7 @@ async function handleBookingsAPI(req: Request, supabase: any, path: string, perm
     return { success: true, data };
   }
   
-  throw new Error('Method not allowed or insufficient permissions');
+  throw new Error('Method not allowed');
 }
 
 async function handleUsersAPI(req: Request, supabase: any, path: string, permissions: any) {
@@ -205,7 +207,20 @@ async function handleUsersAPI(req: Request, supabase: any, path: string, permiss
     return { success: true, data };
   }
   
-  throw new Error('Method not allowed or insufficient permissions');
+  // Mobile app can register users and update profiles
+  if (method === 'POST') {
+    const body = await req.json();
+    const { data, error } = await supabase
+      .from('profiles')
+      .upsert(body)
+      .select()
+      .single();
+    
+    if (error) throw error;
+    return { success: true, data };
+  }
+  
+  throw new Error('Method not allowed');
 }
 
 async function handleNotificationsAPI(req: Request, supabase: any, path: string, permissions: any) {
