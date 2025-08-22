@@ -212,7 +212,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const isAdmin = profile?.role === 'admin';
+  const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin';
   const isTeacher = profile?.role === 'teacher_private' || profile?.role === 'teacher_public';
   const isAssociation = profile?.role === 'association';
   const isPartner = profile?.role === 'partner';
