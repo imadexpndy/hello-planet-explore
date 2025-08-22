@@ -28,6 +28,7 @@ import { Privacy } from "./pages/Privacy";
 import { Terms } from "./pages/Terms";
 import { healthCheck } from "./pages/api/health";
 import AdminSetup from "./pages/admin/AdminSetup";
+import AdminApiKeys from "./pages/admin/AdminApiKeys";
 
 const queryClient = new QueryClient();
 
@@ -95,6 +96,14 @@ const App = () => {
                 element={
                   <ProtectedRoute requiredRole="admin">
                     <AdminSessions />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/api-keys" 
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminApiKeys />
                   </ProtectedRoute>
                 } 
               />

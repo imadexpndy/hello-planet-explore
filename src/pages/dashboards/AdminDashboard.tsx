@@ -18,7 +18,8 @@ import {
   UserCheck,
   Ticket,
   TrendingUp,
-  Eye
+  Eye,
+  Key
 } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -163,6 +164,21 @@ export default function AdminDashboard() {
               <Eye className="h-4 w-4 text-blue-500" />
               <span>2,456 vues de spectacles</span>
             </div>
+          </div>
+        </DashboardCard>
+
+        <DashboardCard
+          title="Clés API"
+          description="Générer et gérer les clés API pour l'accès mobile"
+          icon={Key}
+          href="/admin/api-keys"
+          buttonText="Gérer les clés"
+          gradient={true}
+        >
+          <div className="space-y-2 text-sm text-muted-foreground">
+            <p>• Accès complet aux données</p>
+            <p>• Intégration mobile et externe</p>
+            <p>• Gestion des permissions</p>
           </div>
         </DashboardCard>
 
