@@ -29,6 +29,12 @@ import { Terms } from "./pages/Terms";
 import { healthCheck } from "./pages/api/health";
 import AdminSetup from "./pages/admin/AdminSetup";
 import AdminApiKeys from "./pages/admin/AdminApiKeys";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminOrganizations from "./pages/admin/AdminOrganizations";
+import AdminCommunications from "./pages/admin/AdminCommunications";
+import AdminAudit from "./pages/admin/AdminAudit";
+import AdminStatistics from "./pages/admin/AdminStatistics";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -104,6 +110,54 @@ const App = () => {
                 element={
                   <ProtectedRoute requiredRole="admin">
                     <AdminApiKeys />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/users" 
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminUsers />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/organizations" 
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminOrganizations />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/communications" 
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminCommunications />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/audit" 
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminAudit />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/analytics" 
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminStatistics />
+                  </ProtectedRoute>
+                } 
+              />
+              <Route 
+                path="/admin/settings" 
+                element={
+                  <ProtectedRoute requiredRole="admin">
+                    <AdminSettings />
                   </ProtectedRoute>
                 } 
               />
