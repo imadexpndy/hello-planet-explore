@@ -23,6 +23,8 @@ const Auth = () => {
   const [showAdminSetup, setShowAdminSetup] = useState(false);
   const [setupToken, setSetupToken] = useState('');
   const [adminFullName, setAdminFullName] = useState('Administrator');
+  const [adminEmail, setAdminEmail] = useState('');
+  const [adminPassword, setAdminPassword] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -136,20 +138,20 @@ const Auth = () => {
   };
 
   const createAdmin = async () => {
-    if (!email || !password) {
+    if (!adminEmail || !adminPassword) {
       toast({
         title: "Champs requis",
-        description: "Veuillez remplir l'email et le mot de passe dans le formulaire de connexion ci-dessus.",
+        description: "Veuillez remplir l'email et le mot de passe pour l'administrateur.",
         variant: "destructive"
       });
       return;
     }
     
-    console.log('Creating admin with:', { email, setupToken: setupToken ? 'PROVIDED' : 'MISSING', adminFullName });
+    console.log('Creating admin with:', { email: adminEmail, setupToken: setupToken ? 'PROVIDED' : 'MISSING', adminFullName });
     setLoading(true);
     try {
       const { data, error } = await supabase.functions.invoke('create-admin', {
-        body: { email, password, full_name: adminFullName },
+        body: { email: adminEmail, password: adminPassword, full_name: adminFullName },
         headers: { 'x-admin-setup-token': setupToken },
       } as any);
 
@@ -167,7 +169,7 @@ const Auth = () => {
       setShowAdminSetup(false);
 
       // Tente une connexion immédiate
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email: adminEmail, password: adminPassword });
       if (signInError) {
         console.log('Sign in error after admin creation:', signInError);
         toast({ title: "Connexion requise", description: "Admin créé, veuillez vous connecter.", variant: "default" });
@@ -334,6 +336,26 @@ const Auth = () => {
               />
             </div>
             <div className="space-y-2">
+              <Label htmlFor="admin-email">Email administrateur</Label>
+              <Input
+                id="admin-email"
+                type="email"
+                value={adminEmail}
+                onChange={(e) => setAdminEmail(e.target.value)}
+                placeholder="admin@example.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="admin-password">Mot de passe administrateur</Label>
+              <Input
+                id="admin-password"
+                type="password"
+                value={adminPassword}
+                onChange={(e) => setAdminPassword(e.target.value)}
+                placeholder="Mot de passe sécurisé"
+              />
+            </div>
+            <div className="space-y-2">
               <Label htmlFor="full-name">Nom complet (optionnel)</Label>
               <Input
                 id="full-name"
@@ -344,7 +366,7 @@ const Auth = () => {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAdminSetup(false)}>Annuler</Button>
-            <Button variant="glow" onClick={createAdmin} disabled={loading || !setupToken}>
+            <Button variant="glow" onClick={createAdmin} disabled={loading || !setupToken || !adminEmail || !adminPassword}>
               {loading ? 'Création...' : "Créer l'admin"}
             </Button>
           </DialogFooter>
