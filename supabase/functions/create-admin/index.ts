@@ -63,7 +63,7 @@ serve(async (req) => {
       .upsert({
         user_id: userId,
         email,
-        role: 'admin',
+        admin_role: 'admin_full',
         full_name: full_name || 'Administrator',
         verification_status: 'approved',
         is_verified: true,
