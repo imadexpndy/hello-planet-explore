@@ -32,16 +32,16 @@ serve(async (req: Request) => {
       throw new Error('Unauthorized');
     }
 
-    // Check if user has permission to invite admins
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('user_id', user.id)
-      .single();
+// Check if user has permission to invite admins
+const { data: profile } = await supabase
+  .from('profiles')
+  .select('admin_role')
+  .eq('user_id', user.id)
+  .single();
 
-    if (!profile || !['super_admin', 'admin_full'].includes(profile.role)) {
-      throw new Error('Insufficient permissions');
-    }
+if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
+  throw new Error('Insufficient permissions');
+}
 
     // Generate invitation token
     const invitationToken = crypto.randomUUID();
