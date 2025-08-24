@@ -136,6 +136,15 @@ const Auth = () => {
   };
 
   const createAdmin = async () => {
+    if (!email || !password) {
+      toast({
+        title: "Champs requis",
+        description: "Veuillez remplir l'email et le mot de passe dans le formulaire de connexion ci-dessus.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     console.log('Creating admin with:', { email, setupToken: setupToken ? 'PROVIDED' : 'MISSING', adminFullName });
     setLoading(true);
     try {
@@ -335,7 +344,7 @@ const Auth = () => {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAdminSetup(false)}>Annuler</Button>
-            <Button variant="glow" onClick={createAdmin} disabled={loading || !setupToken || !email || !password}>
+            <Button variant="glow" onClick={createAdmin} disabled={loading || !setupToken}>
               {loading ? 'Création...' : "Créer l'admin"}
             </Button>
           </DialogFooter>
