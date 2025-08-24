@@ -6,6 +6,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-admin-setup-token",
 };
 
+// No-op version bump to trigger redeploy
+const BUILD_VERSION = 'redeploy-1';
+console.log('create-admin function deployed', { version: BUILD_VERSION });
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
