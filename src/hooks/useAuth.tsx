@@ -82,7 +82,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.error('Error fetching profile:', error);
         return null;
       }
-      return data;
+      // Ensure role exists, fallback to b2c_user if missing
+      const profile = data ? {
+        ...data,
+        role: (data.admin_role || 'b2c_user') as Profile['role']
+      } : null;
+      return profile;
     } catch (error) {
       console.error('Error fetching profile:', error);
       return null;

@@ -77,7 +77,7 @@ export default function AdminStatistics() {
       const revenue = revenueRes.data || [];
 
       // Calculate basic stats
-      const totalRevenue = revenue.reduce((sum, booking) => sum + (parseFloat(booking.total_amount) || 0), 0);
+      const totalRevenue = revenue.reduce((sum, booking) => sum + (parseFloat(booking.total_amount?.toString() || '0') || 0), 0);
       const paidBookings = bookings.filter(b => b.status === 'confirmed').length;
       const averageBookingValue = paidBookings > 0 ? totalRevenue / paidBookings : 0;
       const conversionRate = bookings.length > 0 ? (paidBookings / bookings.length) * 100 : 0;

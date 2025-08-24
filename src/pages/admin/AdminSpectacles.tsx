@@ -191,7 +191,9 @@ export default function AdminSpectacles() {
     spectacle.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (profile?.role !== 'admin') {
+  const { isAdmin } = useAuth();
+  
+  if (!isAdmin) {
     return <div>Accès non autorisé</div>;
   }
 

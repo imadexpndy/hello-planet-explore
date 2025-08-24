@@ -50,7 +50,7 @@ const Auth = () => {
   const redirectUser = async () => {
     const { data: profile } = await supabase
       .from('profiles')
-      .select('role, verification_status')
+      .select('admin_role, verification_status')
       .eq('user_id', user!.id)
       .single();
 
@@ -63,8 +63,9 @@ const Auth = () => {
         return;
       }
 
-      switch (profile.role) {
-        case 'admin':
+      const role = profile.admin_role || 'b2c_user';
+      switch (role) {
+        case 'admin_full':
         case 'super_admin':
           navigate('/admin');
           break;

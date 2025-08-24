@@ -30,7 +30,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
   const getRoleBadgeVariant = () => {
     switch (profile?.role) {
-      case 'admin':
+      case 'admin_full':
       case 'super_admin':
         return 'destructive';
       case 'teacher_private':
@@ -48,7 +48,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
   const getRoleDisplayName = () => {
     switch (profile?.role) {
-      case 'admin':
+      case 'admin_full':
         return 'Administrateur';
       case 'super_admin':
         return 'Super Admin';

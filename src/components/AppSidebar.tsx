@@ -39,7 +39,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
 export function AppSidebar() {
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, isAdmin } = useAuth();
   const { state } = useSidebar();
   const location = useLocation();
   const isCollapsed = state === "collapsed";
@@ -56,7 +56,7 @@ export function AppSidebar() {
     ];
 
     switch (role) {
-      case 'admin':
+      case 'admin_full':
       case 'super_admin':
         return [
           ...commonItems,
@@ -115,7 +115,7 @@ export function AppSidebar() {
 
   const getDashboardPath = () => {
     switch (profile?.role) {
-      case 'admin':
+      case 'admin_full':
       case 'super_admin':
         return '/admin';
       case 'teacher_private':
@@ -173,7 +173,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
 
-        {(profile?.role === 'admin' || profile?.role === 'super_admin') && (
+        {isAdmin && (
           <>
             <Separator />
             <SidebarGroup>

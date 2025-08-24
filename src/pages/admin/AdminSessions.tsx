@@ -249,7 +249,9 @@ export default function AdminSessions() {
     session.city?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  if (profile?.role !== 'admin') {
+  const { isAdmin } = useAuth();
+  
+  if (!isAdmin) {
     return <div>Accès non autorisé</div>;
   }
 
