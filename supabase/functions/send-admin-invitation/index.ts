@@ -116,8 +116,20 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
     });
 
     if (emailError) {
-      const msg = typeof emailError === 'string' ? emailError : (emailError?.message ?? JSON.stringify(emailError));
-      throw new Error(`Email not sent: ${msg}`);
+      console.error('Resend error details:', emailError);
+      let errorMsg = 'Unknown email error';
+      
+      if (typeof emailError === 'string') {
+        errorMsg = emailError;
+      } else if (emailError?.message) {
+        errorMsg = emailError.message;
+      } else if (emailError?.error) {
+        errorMsg = emailError.error;
+      } else {
+        errorMsg = JSON.stringify(emailError);
+      }
+      
+      throw new Error(`Email not sent: ${errorMsg}`);
     }
 
     console.log('Invitation email sent:', emailData);
