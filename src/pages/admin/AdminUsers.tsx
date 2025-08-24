@@ -255,7 +255,7 @@ export default function AdminUsers() {
                   </TableCell>
                   <TableCell>{new Date(user.created_at).toLocaleDateString('fr-FR')}</TableCell>
                    {isSuperAdmin && (
-                     <TableCell className="space-x-2">
+                     <TableCell>
                        <Select 
                          value={user.admin_role || ''} 
                          onValueChange={(value) => updateUserRole(user.user_id, value)}
@@ -269,15 +269,6 @@ export default function AdminUsers() {
                            ))}
                          </SelectContent>
                        </Select>
-                       <Button
-                         size="sm"
-                         variant="outline"
-                         onClick={() => resendInvitation(user.email, user.admin_role, user.full_name || 'Admin')}
-                         disabled={!user.admin_role || user.admin_role === 'b2c_user'}
-                         className="mt-2"
-                       >
-                         Renvoyer invitation
-                       </Button>
                      </TableCell>
                    )}
                 </TableRow>
@@ -304,6 +295,7 @@ export default function AdminUsers() {
                   <TableHead>Rôle</TableHead>
                   <TableHead>Envoyée le</TableHead>
                   <TableHead>Expire le</TableHead>
+                  {isSuperAdmin && <TableHead>Actions</TableHead>}
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -317,6 +309,19 @@ export default function AdminUsers() {
                     </TableCell>
                     <TableCell>{new Date(invitation.created_at).toLocaleDateString('fr-FR')}</TableCell>
                     <TableCell>{new Date(invitation.expires_at).toLocaleDateString('fr-FR')}</TableCell>
+                    {isSuperAdmin && (
+                      <TableCell>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => resendInvitation(invitation.email, invitation.role, 'Admin')}
+                          disabled={loading}
+                        >
+                          <Mail className="h-3 w-3 mr-1" />
+                          Renvoyer
+                        </Button>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
               </TableBody>
