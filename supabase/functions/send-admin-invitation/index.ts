@@ -111,9 +111,31 @@ serve(async (req: Request) => {
     );
 
     if (inviteError) {
+      const msg = (inviteError as any)?.message || String(inviteError);
       console.error('Supabase invite error:', inviteError);
+
+      // Fallback: if user already exists, generate a recovery (magic) link to let them sign in
+      if (/already exists|already registered|duplicate/i.test(msg)) {
+        const { data: linkData, error: linkError } = await supabase.auth.admin.generateLink({
+          type: 'recovery',
+          email,
+          options: { data: { admin_role: role, invited_by: user.id } }
+        });
+        if (linkError) {
+          console.error('Failed to generate recovery link:', linkError);
+          return new Response(
+            JSON.stringify({ error: `User exists and recovery link failed: ${linkError.message}` }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+        return new Response(
+          JSON.stringify({ success: true, invitation, mode: 'recovery_fallback', recoveryLink: linkData?.action_link || null }),
+          { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       return new Response(
-        JSON.stringify({ error: `Failed to send invite: ${inviteError.message}` }),
+        JSON.stringify({ error: `Failed to send invite: ${msg}` }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }

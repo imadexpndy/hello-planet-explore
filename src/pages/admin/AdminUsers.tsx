@@ -94,7 +94,13 @@ export default function AdminUsers() {
         return;
       }
 
-      toast.success('Invitation envoyée avec succès!');
+      if (data?.recoveryLink) {
+        await navigator.clipboard.writeText(data.recoveryLink);
+        toast.success("Utilisateur existant: lien de connexion copié dans le presse-papiers");
+      } else {
+        toast.success('Invitation envoyée avec succès!');
+      }
+
       setInviteDialogOpen(false);
       setInviteForm({ email: '', role: 'admin_spectacles', invitedByName: '' });
       fetchInvitations();
@@ -146,10 +152,15 @@ export default function AdminUsers() {
         }
       });
 
-      if (error) throw error;
-
-      toast.success('Invitation renvoyée avec succès!');
-      fetchInvitations();
+      if (data?.error) {
+        toast.error(`Erreur: ${data.error}`);
+      } else if (data?.recoveryLink) {
+        await navigator.clipboard.writeText(data.recoveryLink);
+        toast.success("Utilisateur existant: lien de connexion copié dans le presse-papiers");
+      } else {
+        toast.success('Invitation renvoyée avec succès!');
+        fetchInvitations();
+      }
     } catch (error) {
       console.error('Error resending invitation:', error);
       toast.error('Erreur lors du renvoi de l\'invitation');
