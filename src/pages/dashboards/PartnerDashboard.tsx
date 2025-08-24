@@ -72,7 +72,7 @@ export default function PartnerDashboard() {
           title="Allouer des tickets"
           description="Distribuer aux associations"
           icon={Ticket}
-          href="/partner/allocate-tickets"
+          href="/partner/ticket-allocation"
           buttonText="Allouer"
           badge="50 disponibles"
         />

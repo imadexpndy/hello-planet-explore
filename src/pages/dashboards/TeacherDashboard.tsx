@@ -22,8 +22,8 @@ import {
 export default function TeacherDashboard() {
   const { profile } = useAuth();
   
-  const isPrivateTeacher = profile?.role === 'teacher_private';
-  const isPublicTeacher = profile?.role === 'teacher_public';
+  const isPrivateTeacher = profile?.verification_status === 'teacher_private';
+  const isPublicTeacher = profile?.verification_status === 'teacher_public';
   const schoolType = isPrivateTeacher ? 'privée' : 'publique';
 
   const headerActions = (
@@ -90,33 +90,30 @@ export default function TeacherDashboard() {
           title="Spectacles disponibles"
           description="Découvrir la programmation adaptée à votre classe"
           icon={Theater}
-          href="/teacher/shows"
+          href={isPrivateTeacher ? "/teacher/private-booking" : "/teacher/public-booking"}
           buttonText="Voir les spectacles"
           gradient={true}
           badge="12 spectacles"
         />
 
         <DashboardCard
-          title="Nouvelle réservation"
-          description={isPrivateTeacher ? 
-            "Réserver pour votre école avec devis personnalisé" : 
-            "Demander vos places gratuites pour une session"
-          }
-          icon={Ticket}
-          href={isPrivateTeacher ? "/teacher/new-booking" : "/teacher/public-booking"}
-          buttonText="Réserver maintenant"
-          badge={isPrivateTeacher ? "Devis requis" : "Gratuit"}
-          badgeVariant={isPrivateTeacher ? "default" : "secondary"}
-        />
-
-        <DashboardCard
-          title="Mes réservations"
-          description="Suivre vos réservations en cours et confirmées"
+          title="Mes Réservations"
+          description="Gérez vos réservations et téléchargez vos documents"
           icon={ClipboardList}
           href="/teacher/bookings"
           buttonText="Voir mes réservations"
           badge="3 actives"
           badgeVariant="secondary"
+        />
+
+        <DashboardCard
+          title="Documents"
+          description="Téléchargez vos devis, factures et billets"
+          icon={FileText}
+          href="/teacher/documents"
+          buttonText="Accéder aux documents"
+          badge={isPrivateTeacher ? "Devis/Factures" : "Gratuit"}
+          badgeVariant="default"
         />
       </div>
 

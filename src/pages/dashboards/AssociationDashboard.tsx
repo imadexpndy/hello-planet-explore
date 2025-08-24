@@ -62,18 +62,9 @@ export default function AssociationDashboard() {
           title="Spectacles disponibles"
           description="Programmation par tranche d'âge"
           icon={Theater}
-          href="/association/shows"
+          href="/association/booking"
           buttonText="Voir les spectacles"
           gradient={true}
-        />
-
-        <DashboardCard
-          title="Nouvelle réservation"
-          description="Places gratuites pour vos bénéficiaires"
-          icon={Ticket}
-          href="/association/new-booking"
-          buttonText="Réserver"
-          badge="Gratuit"
         />
 
         <DashboardCard
@@ -82,6 +73,17 @@ export default function AssociationDashboard() {
           icon={ClipboardList}
           href="/association/bookings"
           buttonText="Mes réservations"
+          badge="2 actives"
+        />
+
+        <DashboardCard
+          title="Documents"
+          description="Téléchargez vos confirmations et billets gratuits"
+          icon={FileText}
+          href="/association/documents"
+          buttonText="Accéder aux documents"
+          badge="Gratuit"
+          badgeVariant="secondary"
         />
 
         <DashboardCard
