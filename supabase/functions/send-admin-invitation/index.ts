@@ -79,7 +79,7 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
       'admin_full': 'Administrateur Complet',
       'super_admin': 'Super Administrateur'
     };
-    const fromAddress = Deno.env.get('RESEND_FROM') || "Lovable <onboarding@resend.dev>";
+    const fromAddress = Deno.env.get('RESEND_FROM') || "EDJS <no-reply@edjs.art>";
 
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: fromAddress,
