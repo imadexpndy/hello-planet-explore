@@ -9,10 +9,9 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
-const resendApiKey = Deno.env.get('RESEND_API_KEY')!;
+const resendApiKey = Deno.env.get('RESEND_API_KEY') || '';
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
-const resend = new Resend(resendApiKey);
 
 serve(async (req: Request) => {
   // Handle CORS preflight requests
@@ -29,19 +28,25 @@ serve(async (req: Request) => {
     const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
     if (authError || !user) {
-      throw new Error('Unauthorized');
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-// Check if user has permission to invite admins
-const { data: profile } = await supabase
-  .from('profiles')
-  .select('admin_role')
-  .eq('user_id', user.id)
-  .single();
+    // Check if user has permission to invite admins (based on admin_role)
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('admin_role')
+      .eq('user_id', user.id)
+      .single();
 
-if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
-  throw new Error('Insufficient permissions');
-}
+    if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
+      return new Response(
+        JSON.stringify({ error: 'Insufficient permissions' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     // Determine token to use (reuse existing for resend)
     const tokenToUse = invitationToken ?? crypto.randomUUID();
@@ -61,17 +66,20 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
         .single();
 
       if (inviteError) {
-        throw new Error(`Failed to create invitation: ${inviteError.message}`);
+        return new Response(
+          JSON.stringify({ error: `Failed to create invitation: ${inviteError.message}` }),
+          { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
       invitation = insertData;
     }
 
     // Send invitation email
     const inviteUrl = `${supabaseUrl.replace('supabase.co', 'lovable.app')}/admin/accept-invitation?token=${tokenToUse}`;
-    
-    const roleNames = {
+
+    const roleNames: Record<string, string> = {
       'admin_spectacles': 'Gestionnaire de Spectacles',
-      'admin_schools': 'Gestionnaire d\'Écoles',
+      'admin_schools': "Gestionnaire d'Écoles",
       'admin_partners': 'Gestionnaire de Partenaires',
       'admin_support': 'Support',
       'admin_notifications': 'Gestionnaire de Notifications',
@@ -79,22 +87,35 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
       'admin_full': 'Administrateur Complet',
       'super_admin': 'Super Administrateur'
     };
-    const rawFrom = Deno.env.get('RESEND_FROM')?.trim();
-    const fromAddress = rawFrom;
-    const validFrom = !!rawFrom && (
-      /^[^<>\s]+@[^<>\s]+\.[^<>\s]+$/.test(rawFrom) ||
-      /^[^<>]+<\s*[^<>\s]+@[^<>\s]+\.[^<>\s]+\s*>$/.test(rawFrom)
+
+    // Sanitize and validate RESEND_FROM (strip stray quotes and spaces)
+    const rawFrom = Deno.env.get('RESEND_FROM') ?? '';
+    const sanitizedFrom = rawFrom.trim().replace(/^['"]+|['"]+$/g, '').trim();
+    const fromAddress = sanitizedFrom;
+    const validFrom = !!sanitizedFrom && (
+      /^[^<>\s]+@[^<>\s]+\.[^<>\s]+$/.test(sanitizedFrom) ||
+      /^[^<>]+<\s*[^<>\s]+@[^<>\s]+\.[^<>\s]+\s*>$/.test(sanitizedFrom)
     );
 
     if (!validFrom) {
       console.error('Invalid RESEND_FROM format or missing.');
       return new Response(
         JSON.stringify({
-          error: 'Invalid or missing RESEND_FROM. Use "no-reply@edjs.art" or "EDJS <no-reply@edjs.art>" from your verified domain.'
+          error: 'Invalid or missing RESEND_FROM. Use no-reply@edjs.art or "EDJS <no-reply@edjs.art>" (no quotes in the secret) from a verified domain.'
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    // Initialize Resend client safely (avoid startup crashes when key is missing)
+    if (!resendApiKey || !resendApiKey.trim()) {
+      console.error('Missing RESEND_API_KEY.');
+      return new Response(
+        JSON.stringify({ error: 'Missing RESEND_API_KEY. Set it in Supabase Function secrets.' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    const resend = new Resend(resendApiKey.trim());
 
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: fromAddress,
@@ -133,18 +154,19 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
     if (emailError) {
       console.error('Resend error details:', emailError);
       let errorMsg = 'Unknown email error';
-      
       if (typeof emailError === 'string') {
         errorMsg = emailError;
-      } else if (emailError?.message) {
-        errorMsg = emailError.message;
-      } else if (emailError?.error) {
-        errorMsg = emailError.error;
+      } else if ((emailError as any)?.message) {
+        errorMsg = (emailError as any).message;
+      } else if ((emailError as any)?.error) {
+        errorMsg = (emailError as any).error;
       } else {
-        errorMsg = JSON.stringify(emailError);
+        try { errorMsg = JSON.stringify(emailError); } catch { /* ignore */ }
       }
-      
-      throw new Error(`Email not sent: ${errorMsg}`);
+      return new Response(
+        JSON.stringify({ error: `Email not sent: ${errorMsg}` }),
+        { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
     console.log('Invitation email sent:', emailData);
@@ -153,7 +175,7 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
       JSON.stringify({ 
         success: true, 
         invitation: invitation,
-        emailId: emailData?.id || null 
+        emailId: (emailData as any)?.id || null 
       }),
       {
         status: 200,
@@ -164,7 +186,7 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
   } catch (error: any) {
     console.error('Error sending admin invitation:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error?.message || 'Unknown error' }),
       {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
