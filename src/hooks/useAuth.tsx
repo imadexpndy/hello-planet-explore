@@ -14,7 +14,7 @@ interface Profile {
   name: string | null;
   phone: string | null;
   whatsapp: string | null;
-  role: 'admin' | 'teacher_private' | 'teacher_public' | 'association' | 'partner' | 'b2c_user' | 'super_admin';
+  role: 'admin_spectacles' | 'admin_schools' | 'admin_partners' | 'admin_support' | 'admin_notifications' | 'admin_editor' | 'admin_full' | 'super_admin' | 'teacher_private' | 'teacher_public' | 'association' | 'partner' | 'b2c_user';
   organization_id: string | null;
   is_verified: boolean;
   verification_status: string | null;
@@ -24,6 +24,7 @@ interface Profile {
   school_id: string | null;
   association_id: string | null;
   contact_person: string | null;
+  created_at: string;
 }
 
 interface AuthContextType {
@@ -35,10 +36,17 @@ interface AuthContextType {
   signIn: (email: string, password: string) => Promise<{ error: any }>;
   signOut: () => Promise<void>;
   isAdmin: boolean;
+  isSuperAdmin: boolean;
   isTeacher: boolean;
   isAssociation: boolean;
   isPartner: boolean;
   isB2C: boolean;
+  hasSpectaclePermission: boolean;
+  hasSchoolPermission: boolean;
+  hasPartnerPermission: boolean;
+  hasSupportPermission: boolean;
+  hasNotificationPermission: boolean;
+  hasEditorPermission: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -212,11 +220,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const isAdmin = profile?.role === 'admin' || profile?.role === 'super_admin';
+  const isAdmin = profile?.role ? ['admin_full', 'super_admin', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor'].includes(profile.role) : false;
+  const isSuperAdmin = profile?.role === 'super_admin' || profile?.role === 'admin_full';
   const isTeacher = profile?.role === 'teacher_private' || profile?.role === 'teacher_public';
   const isAssociation = profile?.role === 'association';
   const isPartner = profile?.role === 'partner';
   const isB2C = profile?.role === 'b2c_user';
+  
+  const hasSpectaclePermission = profile?.role === 'super_admin' || profile?.role === 'admin_full' || profile?.role === 'admin_spectacles';
+  const hasSchoolPermission = profile?.role === 'super_admin' || profile?.role === 'admin_full' || profile?.role === 'admin_schools';
+  const hasPartnerPermission = profile?.role === 'super_admin' || profile?.role === 'admin_full' || profile?.role === 'admin_partners';
+  const hasSupportPermission = profile?.role === 'super_admin' || profile?.role === 'admin_full' || profile?.role === 'admin_support';
+  const hasNotificationPermission = profile?.role === 'super_admin' || profile?.role === 'admin_full' || profile?.role === 'admin_notifications';
+  const hasEditorPermission = profile?.role === 'super_admin' || profile?.role === 'admin_full' || profile?.role === 'admin_editor';
 
   const value = {
     user,
@@ -227,10 +243,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     signIn,
     signOut,
     isAdmin,
+    isSuperAdmin,
     isTeacher,
     isAssociation,
     isPartner,
     isB2C,
+    hasSpectaclePermission,
+    hasSchoolPermission,
+    hasPartnerPermission,
+    hasSupportPermission,
+    hasNotificationPermission,
+    hasEditorPermission,
   };
 
   return (

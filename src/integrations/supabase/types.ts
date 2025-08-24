@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_invitations: {
+        Row: {
+          accepted_at: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invitation_token: string
+          invited_by: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invitation_token: string
+          invited_by: string
+          role: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invitation_token?: string
+          invited_by?: string
+          role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string
+        }
+        Relationships: []
+      }
       api_keys: {
         Row: {
           created_at: string
@@ -386,6 +422,7 @@ export type Database = {
       profiles: {
         Row: {
           address: string | null
+          admin_permissions: Json | null
           admin_role: string | null
           association_id: string | null
           city: string | null
@@ -405,7 +442,6 @@ export type Database = {
           phone: string | null
           privacy_accepted: boolean | null
           professional_email: string | null
-          role: Database["public"]["Enums"]["user_role"]
           school_id: string | null
           season_verified_at: string | null
           terms_accepted: boolean | null
@@ -418,6 +454,7 @@ export type Database = {
         }
         Insert: {
           address?: string | null
+          admin_permissions?: Json | null
           admin_role?: string | null
           association_id?: string | null
           city?: string | null
@@ -437,7 +474,6 @@ export type Database = {
           phone?: string | null
           privacy_accepted?: boolean | null
           professional_email?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
           school_id?: string | null
           season_verified_at?: string | null
           terms_accepted?: boolean | null
@@ -450,6 +486,7 @@ export type Database = {
         }
         Update: {
           address?: string | null
+          admin_permissions?: Json | null
           admin_role?: string | null
           association_id?: string | null
           city?: string | null
@@ -469,7 +506,6 @@ export type Database = {
           phone?: string | null
           privacy_accepted?: boolean | null
           professional_email?: string | null
-          role?: Database["public"]["Enums"]["user_role"]
           school_id?: string | null
           season_verified_at?: string | null
           terms_accepted?: boolean | null
@@ -720,9 +756,9 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      get_current_user_role: {
-        Args: Record<PropertyKey, never>
-        Returns: Database["public"]["Enums"]["user_role"]
+      has_admin_permission: {
+        Args: { permission_name: string }
+        Returns: boolean
       }
       verify_api_key: {
         Args: { api_key_input: string }
@@ -753,12 +789,18 @@ export type Database = {
       payment_status: "pending" | "completed" | "failed" | "refunded"
       ticket_status: "active" | "used" | "cancelled"
       user_role:
-        | "admin"
+        | "b2c_user"
         | "teacher_private"
         | "teacher_public"
         | "association"
         | "partner"
-        | "b2c_user"
+        | "admin_spectacles"
+        | "admin_schools"
+        | "admin_partners"
+        | "admin_support"
+        | "admin_notifications"
+        | "admin_editor"
+        | "admin_full"
         | "super_admin"
     }
     CompositeTypes: {
@@ -908,12 +950,18 @@ export const Constants = {
       payment_status: ["pending", "completed", "failed", "refunded"],
       ticket_status: ["active", "used", "cancelled"],
       user_role: [
-        "admin",
+        "b2c_user",
         "teacher_private",
         "teacher_public",
         "association",
         "partner",
-        "b2c_user",
+        "admin_spectacles",
+        "admin_schools",
+        "admin_partners",
+        "admin_support",
+        "admin_notifications",
+        "admin_editor",
+        "admin_full",
         "super_admin",
       ],
     },
