@@ -13,14 +13,94 @@ const resendApiKey = Deno.env.get('RESEND_API_KEY') || '';
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+// Helper function to sanitize and normalize the RESEND_FROM value
+function sanitizeFrom(rawFrom: string): { sanitized: string; isValid: boolean; notes: string[] } {
+  const notes: string[] = [];
+  
+  if (!rawFrom) {
+    return { sanitized: '', isValid: false, notes: ['RESEND_FROM is empty'] };
+  }
+
+  // Unicode normalize and basic cleanup
+  let cleaned = rawFrom.normalize('NFKC').trim();
+  notes.push(`Original length: ${rawFrom.length}, after normalize/trim: ${cleaned.length}`);
+
+  // Strip common smart quotes and enclosing punctuation
+  const smartQuotePattern = /^["""''«»`']+|["""''«»`']+$/g;
+  cleaned = cleaned.replace(smartQuotePattern, '').trim();
+  
+  // Collapse multiple whitespace
+  cleaned = cleaned.replace(/\s+/g, ' ');
+  
+  if (cleaned !== rawFrom) {
+    notes.push('Stripped smart quotes and normalized whitespace');
+  }
+
+  // Email validation regex
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  const displayNameRegex = /^(.+?)\s*<\s*([^\s@]+@[^\s@]+\.[^\s@]+)\s*>$/;
+
+  // Check if it's a display name format
+  const displayMatch = cleaned.match(displayNameRegex);
+  if (displayMatch) {
+    const [, displayName, email] = displayMatch;
+    notes.push(`Display name format detected: "${displayName}" <${email}>`);
+    
+    if (emailRegex.test(email)) {
+      return { sanitized: cleaned, isValid: true, notes };
+    } else {
+      // Fall back to just the email if display name format is malformed
+      notes.push('Display name format invalid, attempting to extract email');
+      if (emailRegex.test(email)) {
+        return { sanitized: email, isValid: true, notes: [...notes, 'Using extracted email only'] };
+      }
+    }
+  }
+
+  // Check if it's a plain email
+  if (emailRegex.test(cleaned)) {
+    notes.push('Plain email format detected');
+    return { sanitized: cleaned, isValid: true, notes };
+  }
+
+  notes.push('Failed all validation patterns');
+  return { sanitized: cleaned, isValid: false, notes };
+}
+
 serve(async (req: Request) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Health check mode
+  const url = new URL(req.url);
+  const isHealthCheck = url.searchParams.get('health') === '1';
+  
   try {
-    const { email, role, invitedByName, invitationToken } = await req.json();
+    const requestBody = req.method === 'GET' ? {} : await req.json();
+    const { email, role, invitedByName, invitationToken, health } = requestBody;
+    
+    if (isHealthCheck || health === true) {
+      // Health/diagnostics mode
+      const rawFrom = Deno.env.get('RESEND_FROM') ?? '';
+      const hasApiKey = !!(Deno.env.get('RESEND_API_KEY') || '').trim();
+      const fromResult = sanitizeFrom(rawFrom);
+      
+      return new Response(
+        JSON.stringify({
+          hasApiKey,
+          hasFrom: !!rawFrom,
+          fromLooksValid: fromResult.isValid,
+          sanitizedFromPreview: fromResult.isValid ? fromResult.sanitized.substring(0, 50) + (fromResult.sanitized.length > 50 ? '...' : '') : null,
+          notes: fromResult.notes
+        }),
+        { 
+          status: 200, 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
 
     // Get the current user
     const authHeader = req.headers.get('authorization');
@@ -88,24 +168,21 @@ serve(async (req: Request) => {
       'super_admin': 'Super Administrateur'
     };
 
-    // Sanitize and validate RESEND_FROM (strip stray quotes and spaces)
+    // Use the robust sanitization function
     const rawFrom = Deno.env.get('RESEND_FROM') ?? '';
-    const sanitizedFrom = rawFrom.trim().replace(/^['"]+|['"]+$/g, '').trim();
-    const fromAddress = sanitizedFrom;
-    const validFrom = !!sanitizedFrom && (
-      /^[^<>\s]+@[^<>\s]+\.[^<>\s]+$/.test(sanitizedFrom) ||
-      /^[^<>]+<\s*[^<>\s]+@[^<>\s]+\.[^<>\s]+\s*>$/.test(sanitizedFrom)
-    );
+    const fromResult = sanitizeFrom(rawFrom);
 
-    if (!validFrom) {
-      console.error('Invalid RESEND_FROM format or missing.');
+    if (!fromResult.isValid) {
+      console.error('Invalid RESEND_FROM format or missing:', fromResult.notes);
       return new Response(
         JSON.stringify({
-          error: 'Invalid or missing RESEND_FROM. Use no-reply@edjs.art or "EDJS <no-reply@edjs.art>" (no quotes in the secret) from a verified domain.'
+          error: `RESEND_FROM validation failed: ${fromResult.notes.join(', ')}. Please use no-reply@edjs.art or "EDJS <no-reply@edjs.art>" from a verified domain.`
         }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    const fromAddress = fromResult.sanitized;
 
     // Initialize Resend client safely (avoid startup crashes when key is missing)
     if (!resendApiKey || !resendApiKey.trim()) {

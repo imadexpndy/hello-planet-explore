@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
-import { Users, UserPlus, Shield, Mail } from 'lucide-react';
+import { Users, UserPlus, Shield, Mail, Activity } from 'lucide-react';
 
 export default function AdminUsers() {
   const { isSuperAdmin } = useAuth();
@@ -23,6 +23,7 @@ export default function AdminUsers() {
     role: 'admin_spectacles',
     invitedByName: ''
   });
+  const [healthCheck, setHealthCheck] = useState(null);
 
   const roleLabels = {
     'admin_spectacles': 'Gestionnaire de Spectacles',
@@ -88,15 +89,42 @@ export default function AdminUsers() {
 
       if (error) throw error;
 
+      if (data?.error) {
+        toast.error(`Erreur: ${data.error}`);
+        return;
+      }
+
       toast.success('Invitation envoyée avec succès!');
       setInviteDialogOpen(false);
       setInviteForm({ email: '', role: 'admin_spectacles', invitedByName: '' });
       fetchInvitations();
     } catch (error) {
       console.error('Error sending invitation:', error);
-      toast.error('Erreur lors de l\'envoi de l\'invitation');
+      const errorMessage = error?.message || 'Erreur lors de l\'envoi de l\'invitation';
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const runHealthCheck = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('send-admin-invitation', {
+        body: { health: true }
+      });
+
+      if (error) throw error;
+
+      setHealthCheck(data);
+      const status = data.hasApiKey && data.fromLooksValid ? 'success' : 'error';
+      const message = data.hasApiKey && data.fromLooksValid 
+        ? 'Configuration email OK ✓' 
+        : `Problème config: ${!data.hasApiKey ? 'API Key manquante' : ''} ${!data.fromLooksValid ? 'RESEND_FROM invalide' : ''}`;
+      
+      toast[status](message);
+    } catch (error) {
+      console.error('Health check failed:', error);
+      toast.error('Échec vérification configuration');
     }
   };
 
@@ -167,63 +195,115 @@ export default function AdminUsers() {
         </div>
         
         {isSuperAdmin && (
-          <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <UserPlus className="h-4 w-4 mr-2" />
-                Inviter un Admin
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>Inviter un nouvel administrateur</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={inviteForm.email}
-                    onChange={(e) => setInviteForm({...inviteForm, email: e.target.value})}
-                    placeholder="email@example.com"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="role">Rôle</Label>
-                  <Select value={inviteForm.role} onValueChange={(value) => setInviteForm({...inviteForm, role: value})}>
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="admin_spectacles">Gestionnaire de Spectacles</SelectItem>
-                      <SelectItem value="admin_schools">Gestionnaire d'Écoles</SelectItem>
-                      <SelectItem value="admin_partners">Gestionnaire de Partenaires</SelectItem>
-                      <SelectItem value="admin_support">Support</SelectItem>
-                      <SelectItem value="admin_notifications">Gestionnaire de Notifications</SelectItem>
-                      <SelectItem value="admin_editor">Éditeur</SelectItem>
-                      <SelectItem value="admin_full">Administrateur Complet</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="invitedByName">Votre nom (pour l'email)</Label>
-                  <Input
-                    id="invitedByName"
-                    value={inviteForm.invitedByName}
-                    onChange={(e) => setInviteForm({...inviteForm, invitedByName: e.target.value})}
-                    placeholder="Votre nom complet"
-                  />
-                </div>
-                <Button onClick={handleSendInvitation} className="w-full">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Envoyer l'invitation
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={runHealthCheck}>
+              <Activity className="h-4 w-4 mr-2" />
+              Vérifier Config Email
+            </Button>
+            <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Inviter un Admin
                 </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Inviter un nouvel administrateur</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={inviteForm.email}
+                      onChange={(e) => setInviteForm({...inviteForm, email: e.target.value})}
+                      placeholder="email@example.com"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="role">Rôle</Label>
+                    <Select value={inviteForm.role} onValueChange={(value) => setInviteForm({...inviteForm, role: value})}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="admin_spectacles">Gestionnaire de Spectacles</SelectItem>
+                        <SelectItem value="admin_schools">Gestionnaire d'Écoles</SelectItem>
+                        <SelectItem value="admin_partners">Gestionnaire de Partenaires</SelectItem>
+                        <SelectItem value="admin_support">Support</SelectItem>
+                        <SelectItem value="admin_notifications">Gestionnaire de Notifications</SelectItem>
+                        <SelectItem value="admin_editor">Éditeur</SelectItem>
+                        <SelectItem value="admin_full">Administrateur Complet</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="invitedByName">Votre nom (pour l'email)</Label>
+                    <Input
+                      id="invitedByName"
+                      value={inviteForm.invitedByName}
+                      onChange={(e) => setInviteForm({...inviteForm, invitedByName: e.target.value})}
+                      placeholder="Votre nom complet"
+                    />
+                  </div>
+                  <Button onClick={handleSendInvitation} className="w-full">
+                    <Mail className="h-4 w-4 mr-2" />
+                    Envoyer l'invitation
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          </div>
         )}
       </div>
+
+      {/* Health Check Results */}
+      {healthCheck && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Activity className="h-5 w-5" />
+              Configuration Email
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-4">
+              <div className="flex items-center gap-2">
+                <Badge variant={healthCheck.hasApiKey ? 'default' : 'destructive'}>
+                  {healthCheck.hasApiKey ? '✓' : '✗'} API Key
+                </Badge>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant={healthCheck.hasFrom ? 'default' : 'destructive'}>
+                  {healthCheck.hasFrom ? '✓' : '✗'} RESEND_FROM
+                </Badge>
+              </div>
+              <div className="flex items-center gap-2">
+                <Badge variant={healthCheck.fromLooksValid ? 'default' : 'destructive'}>
+                  {healthCheck.fromLooksValid ? '✓' : '✗'} Format Valide
+                </Badge>
+              </div>
+            </div>
+            {healthCheck.sanitizedFromPreview && (
+              <p className="text-sm text-muted-foreground mt-2">
+                Adresse détectée: {healthCheck.sanitizedFromPreview}
+              </p>
+            )}
+            {healthCheck.notes && healthCheck.notes.length > 0 && (
+              <details className="mt-2">
+                <summary className="text-sm cursor-pointer">Détails de validation</summary>
+                <ul className="text-xs text-muted-foreground mt-1 ml-4">
+                  {healthCheck.notes.map((note, i) => (
+                    <li key={i}>• {note}</li>
+                  ))}
+                </ul>
+              </details>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Active Users */}
       <Card>
