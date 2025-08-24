@@ -84,7 +84,7 @@ const App = () => {
               <Route 
                 path="/admin" 
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin_full', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor']}>
                     <AdminDashboard />
                   </ProtectedRoute>
                 } 
@@ -92,7 +92,7 @@ const App = () => {
               <Route 
                 path="/admin/spectacles" 
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin_full', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor']}>
                     <AdminSpectacles />
                   </ProtectedRoute>
                 } 
@@ -100,7 +100,7 @@ const App = () => {
               <Route 
                 path="/admin/sessions" 
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin_full', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor']}>
                     <AdminSessions />
                   </ProtectedRoute>
                 } 
@@ -108,7 +108,7 @@ const App = () => {
               <Route 
                 path="/admin/api-keys" 
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin_full', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor']}>
                     <AdminApiKeys />
                   </ProtectedRoute>
                 } 
@@ -116,7 +116,7 @@ const App = () => {
               <Route 
                 path="/admin/users" 
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin_full', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor']}>
                     <AdminUsers />
                   </ProtectedRoute>
                 } 
@@ -124,7 +124,7 @@ const App = () => {
               <Route 
                 path="/admin/organizations" 
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin_full', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor']}>
                     <AdminOrganizations />
                   </ProtectedRoute>
                 } 
@@ -132,7 +132,7 @@ const App = () => {
               <Route 
                 path="/admin/communications" 
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin_full', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor']}>
                     <AdminCommunications />
                   </ProtectedRoute>
                 } 
@@ -140,7 +140,7 @@ const App = () => {
               <Route 
                 path="/admin/audit" 
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin_full', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor']}>
                     <AdminAudit />
                   </ProtectedRoute>
                 } 
@@ -148,7 +148,7 @@ const App = () => {
               <Route 
                 path="/admin/analytics" 
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin_full', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor']}>
                     <AdminStatistics />
                   </ProtectedRoute>
                 } 
@@ -156,7 +156,7 @@ const App = () => {
               <Route 
                 path="/admin/settings" 
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin_full', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor']}>
                     <AdminSettings />
                   </ProtectedRoute>
                 } 
@@ -224,8 +224,15 @@ const App = () => {
                 } 
               />
               
-              {/* Admin setup (one-time) */}
-              <Route path="/admin/setup" element={<AdminSetup />} />
+               {/* Admin setup (one-time) */}
+              <Route 
+                path="/admin/setup" 
+                element={
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin_full', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor']}>
+                    <AdminSetup />
+                  </ProtectedRoute>
+                } 
+              />
               
               {/* Protected B2C Routes */}
               <Route 
@@ -249,7 +256,7 @@ const App = () => {
               <Route 
                 path="/admin/bookings" 
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  <ProtectedRoute allowedRoles={['super_admin', 'admin_full', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor']}>
                     <AdminBookings />
                   </ProtectedRoute>
                 } 
