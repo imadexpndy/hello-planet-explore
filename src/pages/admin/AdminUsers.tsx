@@ -116,10 +116,15 @@ export default function AdminUsers() {
       if (error) throw error;
 
       setHealthCheck(data);
-      const status = data.hasApiKey && data.fromLooksValid ? 'success' : 'error';
-      const message = data.hasApiKey && data.fromLooksValid 
-        ? 'Configuration email OK ✓' 
-        : `Problème config: ${!data.hasApiKey ? 'API Key manquante' : ''} ${!data.fromLooksValid ? 'RESEND_FROM invalide' : ''}`;
+      const supaMode = data?.using === 'supabase-auth';
+      const status = supaMode
+        ? (data.canInvite ? 'success' : 'error')
+        : (data.hasApiKey && data.fromLooksValid ? 'success' : 'error');
+      const message = supaMode
+        ? (data.canInvite ? 'Configuration email (Supabase) OK ✓' : 'Problème config: Supabase service role manquant')
+        : (data.hasApiKey && data.fromLooksValid 
+          ? 'Configuration email OK ✓' 
+          : `Problème config: ${!data.hasApiKey ? 'API Key manquante' : ''} ${!data.fromLooksValid ? 'RESEND_FROM invalide' : ''}`);
       
       toast[status](message);
     } catch (error) {
@@ -269,38 +274,61 @@ export default function AdminUsers() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="flex items-center gap-2">
-                <Badge variant={healthCheck.hasApiKey ? 'default' : 'destructive'}>
-                  {healthCheck.hasApiKey ? '✓' : '✗'} API Key
-                </Badge>
+            {healthCheck?.using === 'supabase-auth' ? (
+              <div className="grid grid-cols-3 gap-4">
+                <div className="flex items-center gap-2">
+                  <Badge variant={healthCheck.canInvite ? 'default' : 'destructive'}>
+                    {healthCheck.canInvite ? '✓' : '✗'} Supabase Auth actif
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant={healthCheck.hasServiceRole ? 'default' : 'destructive'}>
+                    {healthCheck.hasServiceRole ? '✓' : '✗'} Service Role
+                  </Badge>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant={healthCheck.hasUrl ? 'default' : 'destructive'}>
+                    {healthCheck.hasUrl ? '✓' : '✗'} Project URL
+                  </Badge>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Badge variant={healthCheck.hasFrom ? 'default' : 'destructive'}>
-                  {healthCheck.hasFrom ? '✓' : '✗'} RESEND_FROM
-                </Badge>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant={healthCheck.fromLooksValid ? 'default' : 'destructive'}>
-                  {healthCheck.fromLooksValid ? '✓' : '✗'} Format Valide
-                </Badge>
-              </div>
-            </div>
-            {healthCheck.sanitizedFromPreview && (
-              <p className="text-sm text-muted-foreground mt-2">
-                Adresse détectée: {healthCheck.sanitizedFromPreview}
-              </p>
+            ) : (
+              <>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="flex items-center gap-2">
+                    <Badge variant={healthCheck.hasApiKey ? 'default' : 'destructive'}>
+                      {healthCheck.hasApiKey ? '✓' : '✗'} API Key
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={healthCheck.hasFrom ? 'default' : 'destructive'}>
+                      {healthCheck.hasFrom ? '✓' : '✗'} RESEND_FROM
+                    </Badge>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={healthCheck.fromLooksValid ? 'default' : 'destructive'}>
+                      {healthCheck.fromLooksValid ? '✓' : '✗'} Format Valide
+                    </Badge>
+                  </div>
+                </div>
+                {healthCheck.sanitizedFromPreview && (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    Adresse détectée: {healthCheck.sanitizedFromPreview}
+                  </p>
+                )}
+                {healthCheck.notes && healthCheck.notes.length > 0 && (
+                  <details className="mt-2">
+                    <summary className="text-sm cursor-pointer">Détails de validation</summary>
+                    <ul className="text-xs text-muted-foreground mt-1 ml-4">
+                      {healthCheck.notes.map((note, i) => (
+                        <li key={i}>• {note}</li>
+                      ))}
+                    </ul>
+                  </details>
+                )}
+              </>
             )}
-            {healthCheck.notes && healthCheck.notes.length > 0 && (
-              <details className="mt-2">
-                <summary className="text-sm cursor-pointer">Détails de validation</summary>
-                <ul className="text-xs text-muted-foreground mt-1 ml-4">
-                  {healthCheck.notes.map((note, i) => (
-                    <li key={i}>• {note}</li>
-                  ))}
-                </ul>
-              </details>
-            )}
+
           </CardContent>
         </Card>
       )}
