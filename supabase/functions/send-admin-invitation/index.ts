@@ -79,7 +79,18 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
       'admin_full': 'Administrateur Complet',
       'super_admin': 'Super Administrateur'
     };
-    const fromAddress = Deno.env.get('RESEND_FROM') || "EDJS <no-reply@edjs.art>";
+    const fromAddressRaw = (Deno.env.get('RESEND_FROM') || "EDJS <no-reply@edjs.art>").trim();
+    const emailRegex = /^[^<>\s@]+@[^<>\s@]+\.[^<>\s@]+$/;
+    const nameEmailRegex = /^[^<>]+<[^<>\s@]+@[^<>\s@]+\.[^<>]+>$/;
+    const fromIsValid = emailRegex.test(fromAddressRaw) || nameEmailRegex.test(fromAddressRaw);
+    if (!fromIsValid) {
+      console.error('Invalid RESEND_FROM format:', fromAddressRaw);
+      return new Response(
+        JSON.stringify({ error: "Invalid RESEND_FROM. Use 'no-reply@edjs.art' or 'EDJS <no-reply@edjs.art>'." }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+    const fromAddress = fromAddressRaw;
 
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: fromAddress,
