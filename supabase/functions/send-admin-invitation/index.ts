@@ -142,8 +142,18 @@ serve(async (req: Request) => {
 
     console.log('Invitation sent successfully via Supabase Auth:', inviteData);
 
+    // Also generate a direct invite link so admins can share manually if email delivery fails
+    const { data: linkInvite, error: linkInviteError } = await supabase.auth.admin.generateLink({
+      type: 'invite',
+      email,
+      options: { data: { admin_role: role, invited_by: user.id, invitation_token: tokenToUse } }
+    });
+    if (linkInviteError) {
+      console.warn('Could not generate invite link (non-blocking):', linkInviteError);
+    }
+
     return new Response(
-      JSON.stringify({ success: true, invitation, userId: inviteData?.user?.id ?? null }),
+      JSON.stringify({ success: true, invitation, userId: inviteData?.user?.id ?? null, inviteLink: linkInvite?.action_link || null }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 

@@ -98,7 +98,12 @@ export default function AdminUsers() {
         await navigator.clipboard.writeText(data.recoveryLink);
         toast.success("Utilisateur existant: lien de connexion copié dans le presse-papiers");
       } else {
-        toast.success('Invitation envoyée avec succès!');
+        if (data?.inviteLink) {
+          await navigator.clipboard.writeText(data.inviteLink);
+          toast.success("Lien d'invitation copié dans le presse-papiers");
+        } else {
+          toast.success('Invitation envoyée avec succès!');
+        }
       }
 
       setInviteDialogOpen(false);
