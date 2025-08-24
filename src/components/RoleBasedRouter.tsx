@@ -23,6 +23,7 @@ export const RoleBasedRouter = () => {
 
   switch (profile.role) {
     case 'admin_full':
+    case 'super_admin':
       return <AdminDashboard />;
     case 'teacher_private':
     case 'teacher_public':
