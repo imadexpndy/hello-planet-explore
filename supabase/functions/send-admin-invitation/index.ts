@@ -79,7 +79,22 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
       'admin_full': 'Administrateur Complet',
       'super_admin': 'Super Administrateur'
     };
-    const fromAddress = Deno.env.get('RESEND_FROM') || "Lovable <onboarding@resend.dev>";
+    const rawFrom = Deno.env.get('RESEND_FROM')?.trim();
+    const fromAddress = rawFrom;
+    const validFrom = !!rawFrom && (
+      /^[^<>\s]+@[^<>\s]+\.[^<>\s]+$/.test(rawFrom) ||
+      /^[^<>]+<\s*[^<>\s]+@[^<>\s]+\.[^<>\s]+\s*>$/.test(rawFrom)
+    );
+
+    if (!validFrom) {
+      console.error('Invalid RESEND_FROM format or missing.');
+      return new Response(
+        JSON.stringify({
+          error: 'Invalid or missing RESEND_FROM. Use "no-reply@edjs.art" or "EDJS <no-reply@edjs.art>" from your verified domain.'
+        }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
 
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: fromAddress,
