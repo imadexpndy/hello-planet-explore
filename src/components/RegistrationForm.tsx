@@ -218,7 +218,6 @@ export const RegistrationForm: React.FC<RegistrationFormProps> = ({ onBack }) =>
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
-          role: role,
           full_name: formData.fullName,
           phone: formData.phone,
           whatsapp: formData.whatsapp || formData.phone,

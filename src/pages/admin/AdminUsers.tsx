@@ -100,6 +100,30 @@ export default function AdminUsers() {
     }
   };
 
+  const resendInvitation = async (email: string, role: string, name: string) => {
+    try {
+      setLoading(true);
+      
+      const { data, error } = await supabase.functions.invoke('send-admin-invitation', {
+        body: {
+          email,
+          role,
+          invitedByName: name || 'Admin'
+        }
+      });
+
+      if (error) throw error;
+
+      toast.success('Invitation renvoyée avec succès!');
+      fetchInvitations();
+    } catch (error) {
+      console.error('Error resending invitation:', error);
+      toast.error('Erreur lors du renvoi de l\'invitation');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const updateUserRole = async (userId: string, newRole: string) => {
     try {
       const { error } = await supabase
@@ -230,23 +254,32 @@ export default function AdminUsers() {
                     </Badge>
                   </TableCell>
                   <TableCell>{new Date(user.created_at).toLocaleDateString('fr-FR')}</TableCell>
-                  {isSuperAdmin && (
-                    <TableCell>
-                      <Select 
-                        value={user.admin_role || ''} 
-                        onValueChange={(value) => updateUserRole(user.user_id, value)}
-                      >
-                        <SelectTrigger className="w-40">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {Object.entries(roleLabels).map(([value, label]) => (
-                            <SelectItem key={value} value={value}>{label}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </TableCell>
-                  )}
+                   {isSuperAdmin && (
+                     <TableCell className="space-x-2">
+                       <Select 
+                         value={user.admin_role || ''} 
+                         onValueChange={(value) => updateUserRole(user.user_id, value)}
+                       >
+                         <SelectTrigger className="w-40">
+                           <SelectValue />
+                         </SelectTrigger>
+                         <SelectContent>
+                           {Object.entries(roleLabels).map(([value, label]) => (
+                             <SelectItem key={value} value={value}>{label}</SelectItem>
+                           ))}
+                         </SelectContent>
+                       </Select>
+                       <Button
+                         size="sm"
+                         variant="outline"
+                         onClick={() => resendInvitation(user.email, user.admin_role, user.full_name || 'Admin')}
+                         disabled={!user.admin_role || user.admin_role === 'b2c_user'}
+                         className="mt-2"
+                       >
+                         Renvoyer invitation
+                       </Button>
+                     </TableCell>
+                   )}
                 </TableRow>
               ))}
             </TableBody>
