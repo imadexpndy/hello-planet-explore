@@ -3,6 +3,7 @@ import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { logUserLogin, logUserLogout } from '@/lib/audit';
+import { cleanupAuthState } from '@/lib/authCleanup';
 
 interface Profile {
   id: string;
@@ -173,57 +174,70 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     }
   };
 
-  const signIn = async (email: string, password: string) => {
+const signIn = async (email: string, password: string) => {
+  try {
+    // Clean up any stale auth state to prevent limbo
+    cleanupAuthState();
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      await supabase.auth.signOut({ scope: 'global' } as any);
+    } catch {}
 
-      if (error) {
-        toast({
-          title: "Erreur de connexion",
-          description: error.message,
-          variant: "destructive",
-        });
-      } else if (data.user) {
-        // Log successful login
-        setTimeout(() => {
-          logUserLogin(data.user!.id);
-        }, 0);
-      }
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
 
-      return { error };
-    } catch (error: any) {
+    if (error) {
       toast({
         title: "Erreur de connexion",
         description: error.message,
         variant: "destructive",
       });
-      return { error };
+    } else if (data.user) {
+      // Log successful login
+      setTimeout(() => {
+        logUserLogin(data.user!.id);
+      }, 0);
     }
-  };
 
-  const signOut = async () => {
-    try {
-      // Log logout before signing out
-      if (user) {
-        await logUserLogout(user.id);
-      }
-      
-      await supabase.auth.signOut();
-      setUser(null);
-      setSession(null);
-      setProfile(null);
-      window.location.href = '/';
-    } catch (error: any) {
-      toast({
-        title: "Erreur de déconnexion",
-        description: error.message,
-        variant: "destructive",
-      });
+    return { error };
+  } catch (error: any) {
+    toast({
+      title: "Erreur de connexion",
+      description: error.message,
+      variant: "destructive",
+    });
+    return { error };
+  }
+};
+
+const signOut = async () => {
+  try {
+    // Log logout before signing out
+    if (user) {
+      await logUserLogout(user.id);
     }
-  };
+
+    // Clean up local/session storage and attempt global sign out
+    cleanupAuthState();
+    try {
+      await supabase.auth.signOut({ scope: 'global' } as any);
+    } catch {}
+
+    setUser(null);
+    setSession(null);
+    setProfile(null);
+
+    // Force full reload to the auth page for a clean state
+    window.location.href = '/auth';
+  } catch (error: any) {
+    toast({
+      title: "Erreur de déconnexion",
+      description: error.message,
+      variant: "destructive",
+    });
+  }
+};
 
   const isAdmin = profile?.role ? ['admin_full', 'super_admin', 'admin_spectacles', 'admin_schools', 'admin_partners', 'admin_support', 'admin_notifications', 'admin_editor'].includes(profile.role) : false;
   const isSuperAdmin = profile?.role === 'super_admin' || profile?.role === 'admin_full';

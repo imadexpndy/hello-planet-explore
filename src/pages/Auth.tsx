@@ -11,6 +11,7 @@ import { RegistrationForm } from '@/components/RegistrationForm';
 import { ConsentForm } from '@/components/ConsentForm';
 import { LogIn, UserPlus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { cleanupAuthState } from '@/lib/authCleanup';
 const Auth = () => {
   const [mode, setMode] = useState<'login' | 'register' | 'consent'>('login');
   const [email, setEmail] = useState('');
@@ -90,52 +91,57 @@ const Auth = () => {
     }
   };
 
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
 
+  try {
+    // Clean up any stale auth state to avoid limbo
+    cleanupAuthState();
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
+      await supabase.auth.signOut({ scope: 'global' } as any);
+    } catch {}
 
-      if (error) {
-        if (error.message.includes('Invalid login credentials')) {
-          toast({
-            title: "Erreur de connexion",
-            description: "Email ou mot de passe incorrect",
-            variant: "destructive"
-          });
-        } else if (error.message.includes('Email not confirmed')) {
-          toast({
-            title: "Email non confirmé",
-            description: "Veuillez vérifier votre email et cliquer sur le lien de confirmation",
-            variant: "destructive"
-          });
-        } else {
-          toast({
-            title: "Erreur de connexion",
-            description: error.message,
-            variant: "destructive"
-          });
-        }
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      if (error.message.includes('Invalid login credentials')) {
+        toast({
+          title: "Erreur de connexion",
+          description: "Email ou mot de passe incorrect",
+          variant: "destructive"
+        });
+      } else if (error.message.includes('Email not confirmed')) {
+        toast({
+          title: "Email non confirmé",
+          description: "Veuillez vérifier votre email et cliquer sur le lien de confirmation",
+          variant: "destructive"
+        });
       } else {
         toast({
-          title: "Connexion réussie",
-          description: "Bienvenue !",
+          title: "Erreur de connexion",
+          description: error.message,
+          variant: "destructive"
         });
       }
-    } catch (error: any) {
-      toast({
-        title: "Erreur",
-        description: "Une erreur inattendue s'est produite",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
+    } else if (data?.user) {
+      toast({ title: "Connexion réussie", description: "Bienvenue !" });
+      // Force a full reload to ensure a clean authenticated state
+      window.location.href = '/';
     }
-  };
+  } catch (error: any) {
+    toast({
+      title: "Erreur",
+      description: "Une erreur inattendue s'est produite",
+      variant: "destructive"
+    });
+  } finally {
+    setLoading(false);
+  }
+};
 
   const createAdmin = async () => {
     if (!adminEmail || !adminPassword) {
