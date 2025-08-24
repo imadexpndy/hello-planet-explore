@@ -76,8 +76,10 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
       'super_admin': 'Super Administrateur'
     };
 
-    const emailResponse = await resend.emails.send({
-      from: "EDJS Platform <noreply@edjs.ma>",
+    const fromAddress = Deno.env.get('RESEND_FROM') || 'Lovable <onboarding@resend.dev>';
+
+    const { data: emailData, error: emailError } = await resend.emails.send({
+      from: fromAddress,
       to: [email],
       subject: "Invitation à rejoindre l'équipe d'administration EDJS",
       html: `
@@ -110,13 +112,17 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
       `,
     });
 
-    console.log('Invitation email sent:', emailResponse);
+    if (emailError) {
+      throw new Error(`Email not sent: ${emailError.message || emailError}`);
+    }
+
+    console.log('Invitation email sent:', emailData);
 
     return new Response(
       JSON.stringify({ 
         success: true, 
         invitation: invitation,
-        emailResponse: emailResponse 
+        emailId: emailData?.id || null 
       }),
       {
         status: 200,
