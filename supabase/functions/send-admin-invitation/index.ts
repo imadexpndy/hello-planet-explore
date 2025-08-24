@@ -8,6 +8,8 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const resendApiKey = Deno.env.get('RESEND_API_KEY') || '';
+const resendFrom = Deno.env.get('RESEND_FROM') || '';
 
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
@@ -152,8 +154,46 @@ serve(async (req: Request) => {
       console.warn('Could not generate invite link (non-blocking):', linkInviteError);
     }
 
+    // If Resend is configured, send the email ourselves to ensure delivery
+    if (linkInvite?.action_link && resendApiKey && resendFrom) {
+      try {
+        const emailBody = {
+          from: resendFrom,
+          to: [email],
+          subject: "Invitation à rejoindre l'administration EDJS",
+          html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+              <h2 style="color:#2563eb;margin-bottom:16px">Invitation EDJS</h2>
+              <p>Bonjour,</p>
+              <p><strong>${invitedByName || 'Un administrateur'}</strong> vous invite à rejoindre l'administration EDJS en tant que <strong>${role}</strong>.</p>
+              <p>Cliquez sur le bouton ci-dessous pour accepter l'invitation :</p>
+              <p style="text-align:center;margin:24px 0">
+                <a href="${linkInvite.action_link}" style="background:#2563eb;color:#fff;padding:12px 20px;border-radius:6px;text-decoration:none;font-weight:600">Accepter l'invitation</a>
+              </p>
+              <p style="color:#6b7280;font-size:12px">Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur:<br/>${linkInvite.action_link}</p>
+            </div>
+          `
+        } as any;
+
+        const resp = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${resendApiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(emailBody),
+        });
+        const result = await resp.json();
+        if (!resp.ok) {
+          console.warn('Resend send failed (non-blocking):', result);
+        }
+      } catch (e) {
+        console.warn('Resend unexpected error (non-blocking):', e);
+      }
+    }
+
     return new Response(
-      JSON.stringify({ success: true, invitation, userId: inviteData?.user?.id ?? null, inviteLink: linkInvite?.action_link || null }),
+      JSON.stringify({ success: true, invitation, userId: inviteData?.user?.id ?? null, inviteLink: linkInvite?.action_link || null, via: resendApiKey && resendFrom ? 'resend+supabase' : 'supabase-only' }),
       { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
 
