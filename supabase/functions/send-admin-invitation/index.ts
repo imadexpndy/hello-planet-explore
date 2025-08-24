@@ -103,20 +103,22 @@ serve(async (req: Request) => {
       email,
       {
         data: {
-          role,
+          admin_role: role,  // Use admin_role to match profiles table
           invited_by: user.id,
           invitation_token: tokenToUse,
         },
-        // Use the Site URL configured in Supabase for redirects
       }
     );
 
     if (inviteError) {
+      console.error('Supabase invite error:', inviteError);
       return new Response(
         JSON.stringify({ error: `Failed to send invite: ${inviteError.message}` }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
+
+    console.log('Invitation sent successfully via Supabase Auth:', inviteData);
 
     return new Response(
       JSON.stringify({ success: true, invitation, userId: inviteData?.user?.id ?? null }),
