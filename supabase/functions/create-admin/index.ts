@@ -19,10 +19,11 @@ serve(async (req) => {
       });
     }
 
-    const token = req.headers.get('x-admin-setup-token') ?? '';
-    const expected = Deno.env.get('ADMIN_SETUP_TOKEN') ?? '';
+    const token = (req.headers.get('x-admin-setup-token') || '').trim();
+    const expected = (Deno.env.get('ADMIN_SETUP_TOKEN') || '').trim();
     if (!expected || token !== expected) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      console.log('create-admin unauthorized', { providedLen: token.length, expectedSet: !!expected });
+      return new Response(JSON.stringify({ error: 'Unauthorized', reason: !expected ? 'server_secret_missing' : 'token_mismatch' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 401,
       });
