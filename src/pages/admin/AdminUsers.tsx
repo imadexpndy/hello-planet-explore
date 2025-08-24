@@ -100,7 +100,7 @@ export default function AdminUsers() {
     }
   };
 
-  const resendInvitation = async (email: string, role: string, name: string) => {
+  const resendInvitation = async (email: string, role: string, name: string, token?: string) => {
     try {
       setLoading(true);
       
@@ -108,7 +108,8 @@ export default function AdminUsers() {
         body: {
           email,
           role,
-          invitedByName: name || 'Admin'
+          invitedByName: name || 'Admin',
+          invitationToken: token
         }
       });
 
@@ -314,7 +315,7 @@ export default function AdminUsers() {
                         <Button
                           size="sm"
                           variant="outline"
-                          onClick={() => resendInvitation(invitation.email, invitation.role, 'Admin')}
+                          onClick={() => resendInvitation(invitation.email, invitation.role, 'Admin', invitation.invitation_token)}
                           disabled={loading}
                         >
                           <Mail className="h-3 w-3 mr-1" />

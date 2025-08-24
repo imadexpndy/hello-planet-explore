@@ -21,7 +21,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { email, role, invitedByName } = await req.json();
+    const { email, role, invitedByName, invitationToken } = await req.json();
 
     // Get the current user
     const authHeader = req.headers.get('authorization');
@@ -43,27 +43,31 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
   throw new Error('Insufficient permissions');
 }
 
-    // Generate invitation token
-    const invitationToken = crypto.randomUUID();
+    // Determine token to use (reuse existing for resend)
+    const tokenToUse = invitationToken ?? crypto.randomUUID();
 
-    // Create invitation record
-    const { data: invitation, error: inviteError } = await supabase
-      .from('admin_invitations')
-      .insert({
-        email,
-        role,
-        invited_by: user.id,
-        invitation_token: invitationToken,
-      })
-      .select()
-      .single();
+    // Only create a new record if this is a fresh invitation
+    let invitation: any = null;
+    if (!invitationToken) {
+      const { data: insertData, error: inviteError } = await supabase
+        .from('admin_invitations')
+        .insert({
+          email,
+          role,
+          invited_by: user.id,
+          invitation_token: tokenToUse,
+        })
+        .select()
+        .single();
 
-    if (inviteError) {
-      throw new Error(`Failed to create invitation: ${inviteError.message}`);
+      if (inviteError) {
+        throw new Error(`Failed to create invitation: ${inviteError.message}`);
+      }
+      invitation = insertData;
     }
 
     // Send invitation email
-    const inviteUrl = `${supabaseUrl.replace('supabase.co', 'lovable.app')}/admin/accept-invitation?token=${invitationToken}`;
+    const inviteUrl = `${supabaseUrl.replace('supabase.co', 'lovable.app')}/admin/accept-invitation?token=${tokenToUse}`;
     
     const roleNames = {
       'admin_spectacles': 'Gestionnaire de Spectacles',
@@ -75,8 +79,7 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
       'admin_full': 'Administrateur Complet',
       'super_admin': 'Super Administrateur'
     };
-
-    const fromAddress = Deno.env.get('RESEND_FROM') || 'Lovable <onboarding@resend.dev>';
+    const fromAddress = Deno.env.get('RESEND_FROM') || "Lovable <onboarding@resend.dev>";
 
     const { data: emailData, error: emailError } = await resend.emails.send({
       from: fromAddress,
@@ -113,7 +116,8 @@ if (!profile || !['super_admin', 'admin_full'].includes(profile.admin_role)) {
     });
 
     if (emailError) {
-      throw new Error(`Email not sent: ${emailError.message || emailError}`);
+      const msg = typeof emailError === 'string' ? emailError : (emailError?.message ?? JSON.stringify(emailError));
+      throw new Error(`Email not sent: ${msg}`);
     }
 
     console.log('Invitation email sent:', emailData);
