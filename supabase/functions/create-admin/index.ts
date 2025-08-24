@@ -8,8 +8,16 @@ const corsHeaders = {
 };
 
 // No-op version bump to trigger redeploy
-const BUILD_VERSION = 'debug-2';
+const BUILD_VERSION = 'debug-3';
 console.log('create-admin function deployed', { version: BUILD_VERSION });
+
+// Log available environment variables at startup
+console.log('Environment check:', {
+  ADMIN_SETUP_TOKEN_available: !!(Deno.env.get('ADMIN_SETUP_TOKEN') || '').trim(),
+  SUPABASE_URL_available: !!(Deno.env.get('SUPABASE_URL') || '').trim(),
+  SERVICE_ROLE_available: !!(Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '').trim(),
+  timestamp: new Date().toISOString()
+});
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
