@@ -4,10 +4,11 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-admin-setup-token",
+  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
 };
 
 // No-op version bump to trigger redeploy
-const BUILD_VERSION = 'redeploy-1';
+const BUILD_VERSION = 'debug-2';
 console.log('create-admin function deployed', { version: BUILD_VERSION });
 
 serve(async (req) => {
@@ -16,6 +17,27 @@ serve(async (req) => {
   }
 
   try {
+    // Debug endpoint to verify environment availability
+    if (req.method === 'GET') {
+      const expected = (Deno.env.get('ADMIN_SETUP_TOKEN') || '').trim();
+      const supabaseUrlSet = !!(Deno.env.get('SUPABASE_URL') || '').trim();
+      const serviceRoleSet = !!(Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || '').trim();
+
+      return new Response(JSON.stringify({
+        ok: true,
+        version: BUILD_VERSION,
+        env: {
+          ADMIN_SETUP_TOKEN_set: !!expected,
+          ADMIN_SETUP_TOKEN_len: expected.length,
+          SUPABASE_URL_set: supabaseUrlSet,
+          SERVICE_ROLE_set: serviceRoleSet,
+        }
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      });
+    }
+
     if (req.method !== 'POST') {
       return new Response(JSON.stringify({ error: 'Method not allowed' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -26,7 +48,7 @@ serve(async (req) => {
     const token = (req.headers.get('x-admin-setup-token') || '').trim();
     const expected = (Deno.env.get('ADMIN_SETUP_TOKEN') || '').trim();
     if (!expected || token !== expected) {
-      console.log('create-admin unauthorized', { providedLen: token.length, expectedSet: !!expected });
+      console.log('create-admin unauthorized', { providedLen: token.length, expectedSet: !!expected, version: BUILD_VERSION });
       return new Response(JSON.stringify({ error: 'Unauthorized', reason: !expected ? 'server_secret_missing' : 'token_mismatch' }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 401,
