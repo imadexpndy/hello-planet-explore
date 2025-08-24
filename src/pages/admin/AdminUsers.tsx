@@ -118,6 +118,7 @@ export default function AdminUsers() {
   };
 
   const getBadgeVariant = (role: string) => {
+    if (!role) return 'outline';
     if (role === 'super_admin') return 'destructive';
     if (role === 'admin_full') return 'default';
     if (role.startsWith('admin_')) return 'secondary';
@@ -224,15 +225,15 @@ export default function AdminUsers() {
                   <TableCell>{user.full_name || user.first_name + ' ' + user.last_name || 'N/A'}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
-                    <Badge variant={getBadgeVariant(user.role)}>
-                      {roleLabels[user.role] || user.role}
+                    <Badge variant={getBadgeVariant(user.admin_role)}>
+                      {roleLabels[user.admin_role] || user.admin_role || 'Aucun rôle'}
                     </Badge>
                   </TableCell>
                   <TableCell>{new Date(user.created_at).toLocaleDateString('fr-FR')}</TableCell>
                   {isSuperAdmin && (
                     <TableCell>
                       <Select 
-                        value={user.role} 
+                        value={user.admin_role || ''} 
                         onValueChange={(value) => updateUserRole(user.user_id, value)}
                       >
                         <SelectTrigger className="w-40">
