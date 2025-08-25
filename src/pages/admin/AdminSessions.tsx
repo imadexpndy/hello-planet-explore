@@ -4,8 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Navigation } from '@/components/Navigation';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -255,23 +254,8 @@ export default function AdminSessions() {
     return <div>Accès non autorisé</div>;
   }
 
-  return (
-    <div className="min-h-screen bg-background flex">
-      <Navigation />
-      
-      <main className="flex-1 p-6">
-        <Breadcrumbs />
-        
-        <div className="max-w-6xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-4xl font-bold text-primary mb-2">Gestion des Sessions</h1>
-              <p className="text-muted-foreground">
-                Créer et gérer les sessions de spectacles
-              </p>
-            </div>
-            
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+  const headerActions = (
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button onClick={resetForm}>
                   <Plus className="h-4 w-4 mr-2" />
@@ -435,128 +419,132 @@ export default function AdminSessions() {
                 </form>
               </DialogContent>
             </Dialog>
+  );
+
+  return (
+    <DashboardLayout 
+      title="Gestion des Sessions"
+      subtitle="Créer et gérer les sessions de spectacles"
+      headerActions={headerActions}
+    >
+      {/* Search */}
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <div className="flex items-center space-x-2">
+            <Search className="h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Rechercher une session..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="max-w-sm"
+            />
           </div>
+        </CardContent>
+      </Card>
 
-          {/* Search */}
-          <Card className="mb-6">
-            <CardContent className="pt-6">
-              <div className="flex items-center space-x-2">
-                <Search className="h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Rechercher une session..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="max-w-sm"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Sessions Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Sessions ({filteredSessions.length})</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="text-center py-4">Chargement...</div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Spectacle</TableHead>
-                      <TableHead>Date & Lieu</TableHead>
-                      <TableHead>Type</TableHead>
-                      <TableHead>Capacité</TableHead>
-                      <TableHead>Réservé</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Actions</TableHead>
+      {/* Sessions Table */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Sessions ({filteredSessions.length})</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {loading ? (
+            <div className="text-center py-4">Chargement...</div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Spectacle</TableHead>
+                  <TableHead>Date & Lieu</TableHead>
+                  <TableHead>Type</TableHead>
+                  <TableHead>Capacité</TableHead>
+                  <TableHead>Réservé</TableHead>
+                  <TableHead>Statut</TableHead>
+                  <TableHead>Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredSessions.map((session) => {
+                  const bookedSeats = getBookedSeats(session);
+                  const remainingCapacity = getRemainingCapacity(session);
+                  
+                  return (
+                    <TableRow key={session.id}>
+                      <TableCell>
+                        <div className="font-medium">{session.spectacles.title}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="flex items-center text-sm">
+                            <Calendar className="h-3 w-3 mr-1" />
+                            {new Date(session.session_date).toLocaleDateString('fr-FR')} à {session.session_time}
+                          </div>
+                          <div className="flex items-center text-sm text-muted-foreground">
+                            <MapPin className="h-3 w-3 mr-1" />
+                            {session.city && `${session.city}, `}{session.venue}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">
+                          {session.session_type === 'private' && 'Privé'}
+                          {session.session_type === 'public' && 'Public'}
+                          {session.session_type === 'b2c' && 'B2C'}
+                          {session.session_type === 'association' && 'Association'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center text-sm">
+                          <Users className="h-3 w-3 mr-1" />
+                          {session.total_capacity}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="space-y-1">
+                          <div className="text-sm font-medium">
+                            {bookedSeats} / {session.total_capacity}
+                          </div>
+                          <div className={`text-xs ${remainingCapacity > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                            {remainingCapacity > 0 ? `${remainingCapacity} restantes` : 'Complet'}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={
+                          session.status === 'published' ? "default" : 
+                          session.status === 'draft' ? "secondary" : "outline"
+                        }>
+                          {session.status === 'draft' && 'Brouillon'}
+                          {session.status === 'published' && 'Publié'}
+                          {session.status === 'closed' && 'Fermé'}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex space-x-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleEdit(session)}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => handleDelete(session.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
                     </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredSessions.map((session) => {
-                      const bookedSeats = getBookedSeats(session);
-                      const remainingCapacity = getRemainingCapacity(session);
-                      
-                      return (
-                        <TableRow key={session.id}>
-                          <TableCell>
-                            <div className="font-medium">{session.spectacles.title}</div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-1">
-                              <div className="flex items-center text-sm">
-                                <Calendar className="h-3 w-3 mr-1" />
-                                {new Date(session.session_date).toLocaleDateString('fr-FR')} à {session.session_time}
-                              </div>
-                              <div className="flex items-center text-sm text-muted-foreground">
-                                <MapPin className="h-3 w-3 mr-1" />
-                                {session.city && `${session.city}, `}{session.venue}
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant="outline">
-                              {session.session_type === 'private' && 'Privé'}
-                              {session.session_type === 'public' && 'Public'}
-                              {session.session_type === 'b2c' && 'B2C'}
-                              {session.session_type === 'association' && 'Association'}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center text-sm">
-                              <Users className="h-3 w-3 mr-1" />
-                              {session.total_capacity}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="space-y-1">
-                              <div className="text-sm font-medium">
-                                {bookedSeats} / {session.total_capacity}
-                              </div>
-                              <div className={`text-xs ${remainingCapacity > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                {remainingCapacity > 0 ? `${remainingCapacity} restantes` : 'Complet'}
-                              </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <Badge variant={
-                              session.status === 'published' ? "default" : 
-                              session.status === 'draft' ? "secondary" : "outline"
-                            }>
-                              {session.status === 'draft' && 'Brouillon'}
-                              {session.status === 'published' && 'Publié'}
-                              {session.status === 'closed' && 'Fermé'}
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex space-x-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleEdit(session)}
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => handleDelete(session.id)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-    </div>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          )}
+        </CardContent>
+      </Card>
+    </DashboardLayout>
   );
 }

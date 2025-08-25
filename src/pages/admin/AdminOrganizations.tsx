@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { Building2, Plus, School, Users } from 'lucide-react';
 
 export default function AdminOrganizations() {
@@ -167,98 +168,166 @@ export default function AdminOrganizations() {
     );
   }
 
+  const headerActions = (
+    <div className="flex gap-2">
+      {hasPartnerPermission && (
+        <Dialog open={orgDialogOpen} onOpenChange={setOrgDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Nouvelle Organisation
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Créer une nouvelle organisation</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="name">Nom</Label>
+                <Input
+                  id="name"
+                  value={orgForm.name}
+                  onChange={(e) => setOrgForm({...orgForm, name: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="type">Type</Label>
+                <Select value={orgForm.type} onValueChange={(value) => setOrgForm({...orgForm, type: value})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="company">Entreprise</SelectItem>
+                    <SelectItem value="ngo">ONG</SelectItem>
+                    <SelectItem value="government">Gouvernement</SelectItem>
+                    <SelectItem value="other">Autre</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="contact_email">Email de contact</Label>
+                <Input
+                  id="contact_email"
+                  type="email"
+                  value={orgForm.contact_email}
+                  onChange={(e) => setOrgForm({...orgForm, contact_email: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="contact_phone">Téléphone</Label>
+                <Input
+                  id="contact_phone"
+                  value={orgForm.contact_phone}
+                  onChange={(e) => setOrgForm({...orgForm, contact_phone: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="ice">ICE</Label>
+                <Input
+                  id="ice"
+                  value={orgForm.ice}
+                  onChange={(e) => setOrgForm({...orgForm, ice: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="max_free_tickets">Billets gratuits max</Label>
+                <Input
+                  id="max_free_tickets"
+                  type="number"
+                  value={orgForm.max_free_tickets}
+                  onChange={(e) => setOrgForm({...orgForm, max_free_tickets: parseInt(e.target.value) || 0})}
+                />
+              </div>
+              <Button onClick={handleCreateOrganization} className="w-full">
+                Créer l'organisation
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+      {hasSchoolPermission && (
+        <Dialog open={schoolDialogOpen} onOpenChange={setSchoolDialogOpen}>
+          <DialogTrigger asChild>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              Nouvelle École
+            </Button>
+          </DialogTrigger>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Créer une nouvelle école</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="school_name">Nom de l'école</Label>
+                <Input
+                  id="school_name"
+                  value={schoolForm.name}
+                  onChange={(e) => setSchoolForm({...schoolForm, name: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="school_type">Type</Label>
+                <Select value={schoolForm.school_type} onValueChange={(value) => setSchoolForm({...schoolForm, school_type: value})}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="public">Public</SelectItem>
+                    <SelectItem value="private">Privé</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <Label htmlFor="domain">Domaine email</Label>
+                <Input
+                  id="domain"
+                  value={schoolForm.domain}
+                  onChange={(e) => setSchoolForm({...schoolForm, domain: e.target.value})}
+                  placeholder="example.edu"
+                />
+              </div>
+              <div>
+                <Label htmlFor="school_address">Adresse</Label>
+                <Textarea
+                  id="school_address"
+                  value={schoolForm.address}
+                  onChange={(e) => setSchoolForm({...schoolForm, address: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="city">Ville</Label>
+                <Input
+                  id="city"
+                  value={schoolForm.city}
+                  onChange={(e) => setSchoolForm({...schoolForm, city: e.target.value})}
+                />
+              </div>
+              <Button onClick={handleCreateSchool} className="w-full">
+                Créer l'école
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+    </div>
+  );
+
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Gestion des Organisations</h1>
-          <p className="text-muted-foreground">Gérez les écoles, associations et partenaires</p>
-        </div>
-      </div>
+    <DashboardLayout 
+      title="Gestion des Organisations"
+      subtitle="Gérez les partenaires, écoles et associations"
+      headerActions={headerActions}
+    >
 
       {/* Organizations/Partners */}
       {hasPartnerPermission && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Building2 className="h-5 w-5" />
-                Organisations & Partenaires ({organizations.length})
-              </div>
-              <Dialog open={orgDialogOpen} onOpenChange={setOrgDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nouvelle Organisation
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Créer une nouvelle organisation</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="name">Nom</Label>
-                      <Input
-                        id="name"
-                        value={orgForm.name}
-                        onChange={(e) => setOrgForm({...orgForm, name: e.target.value})}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="type">Type</Label>
-                      <Select value={orgForm.type} onValueChange={(value) => setOrgForm({...orgForm, type: value})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="company">Entreprise</SelectItem>
-                          <SelectItem value="ngo">ONG</SelectItem>
-                          <SelectItem value="government">Gouvernement</SelectItem>
-                          <SelectItem value="other">Autre</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="contact_email">Email de contact</Label>
-                      <Input
-                        id="contact_email"
-                        type="email"
-                        value={orgForm.contact_email}
-                        onChange={(e) => setOrgForm({...orgForm, contact_email: e.target.value})}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="contact_phone">Téléphone</Label>
-                      <Input
-                        id="contact_phone"
-                        value={orgForm.contact_phone}
-                        onChange={(e) => setOrgForm({...orgForm, contact_phone: e.target.value})}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="ice">ICE</Label>
-                      <Input
-                        id="ice"
-                        value={orgForm.ice}
-                        onChange={(e) => setOrgForm({...orgForm, ice: e.target.value})}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="max_free_tickets">Billets gratuits max</Label>
-                      <Input
-                        id="max_free_tickets"
-                        type="number"
-                        value={orgForm.max_free_tickets}
-                        onChange={(e) => setOrgForm({...orgForm, max_free_tickets: parseInt(e.target.value) || 0})}
-                      />
-                    </div>
-                    <Button onClick={handleCreateOrganization} className="w-full">
-                      Créer l'organisation
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+            <CardTitle className="flex items-center gap-2">
+              <Building2 className="h-5 w-5" />
+              Organisations & Partenaires ({organizations.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -306,74 +375,9 @@ export default function AdminOrganizations() {
       {hasSchoolPermission && (
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <School className="h-5 w-5" />
-                Écoles ({schools.length})
-              </div>
-              <Dialog open={schoolDialogOpen} onOpenChange={setSchoolDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nouvelle École
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Créer une nouvelle école</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="school_name">Nom de l'école</Label>
-                      <Input
-                        id="school_name"
-                        value={schoolForm.name}
-                        onChange={(e) => setSchoolForm({...schoolForm, name: e.target.value})}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="school_type">Type</Label>
-                      <Select value={schoolForm.school_type} onValueChange={(value) => setSchoolForm({...schoolForm, school_type: value})}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="public">Public</SelectItem>
-                          <SelectItem value="private">Privé</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div>
-                      <Label htmlFor="domain">Domaine email</Label>
-                      <Input
-                        id="domain"
-                        value={schoolForm.domain}
-                        onChange={(e) => setSchoolForm({...schoolForm, domain: e.target.value})}
-                        placeholder="example.edu"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="school_address">Adresse</Label>
-                      <Textarea
-                        id="school_address"
-                        value={schoolForm.address}
-                        onChange={(e) => setSchoolForm({...schoolForm, address: e.target.value})}
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="city">Ville</Label>
-                      <Input
-                        id="city"
-                        value={schoolForm.city}
-                        onChange={(e) => setSchoolForm({...schoolForm, city: e.target.value})}
-                      />
-                    </div>
-                    <Button onClick={handleCreateSchool} className="w-full">
-                      Créer l'école
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+            <CardTitle className="flex items-center gap-2">
+              <School className="h-5 w-5" />
+              Écoles ({schools.length})
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -464,6 +468,6 @@ export default function AdminOrganizations() {
           </Table>
         </CardContent>
       </Card>
-    </div>
+    </DashboardLayout>
   );
 }

@@ -10,6 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { Users, UserPlus, Shield, Mail, Activity } from 'lucide-react';
 
 export default function AdminUsers() {
@@ -207,21 +208,13 @@ export default function AdminUsers() {
     );
   }
 
-  return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Gestion des Utilisateurs</h1>
-          <p className="text-muted-foreground">Gérez les utilisateurs et les administrateurs de la plateforme</p>
-        </div>
-        
-        {isSuperAdmin && (
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={runHealthCheck}>
-              <Activity className="h-4 w-4 mr-2" />
-              Vérifier Config Email
-            </Button>
-            <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
+  const headerActions = isSuperAdmin ? (
+    <div className="flex gap-2">
+      <Button variant="outline" onClick={runHealthCheck}>
+        <Activity className="h-4 w-4 mr-2" />
+        Vérifier Config Email
+      </Button>
+      <Dialog open={inviteDialogOpen} onOpenChange={setInviteDialogOpen}>
               <DialogTrigger asChild>
                 <Button>
                   <UserPlus className="h-4 w-4 mr-2" />
@@ -276,10 +269,15 @@ export default function AdminUsers() {
                 </div>
               </DialogContent>
             </Dialog>
-          </div>
-        )}
-      </div>
+        </div>
+  ) : null;
 
+  return (
+    <DashboardLayout 
+      title="Gestion des Utilisateurs"
+      subtitle="Gérez les utilisateurs et les administrateurs de la plateforme"
+      headerActions={headerActions}
+    >
       {/* Health Check Results */}
       {healthCheck && (
         <Card>
@@ -454,6 +452,6 @@ export default function AdminUsers() {
           </CardContent>
         </Card>
       )}
-    </div>
+    </DashboardLayout>
   );
 }

@@ -11,6 +11,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/hooks/useAuth';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { Mail, Send, MessageSquare, Filter } from 'lucide-react';
 
 export default function AdminCommunications() {
@@ -118,65 +119,63 @@ export default function AdminCommunications() {
     );
   }
 
-  return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Communications</h1>
-          <p className="text-muted-foreground">Gérez les emails, SMS et notifications</p>
+  const headerActions = hasNotificationPermission ? (
+    <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
+      <DialogTrigger asChild>
+        <Button>
+          <Send className="h-4 w-4 mr-2" />
+          Nouvel Email
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Envoyer un email</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div>
+            <Label htmlFor="recipient">Destinataire</Label>
+            <Input
+              id="recipient"
+              type="email"
+              value={emailForm.recipient}
+              onChange={(e) => setEmailForm({...emailForm, recipient: e.target.value})}
+              placeholder="email@example.com"
+            />
+          </div>
+          <div>
+            <Label htmlFor="subject">Sujet</Label>
+            <Input
+              id="subject"
+              value={emailForm.subject}
+              onChange={(e) => setEmailForm({...emailForm, subject: e.target.value})}
+              placeholder="Objet de l'email"
+            />
+          </div>
+          <div>
+            <Label htmlFor="content">Message</Label>
+            <Textarea
+              id="content"
+              value={emailForm.content}
+              onChange={(e) => setEmailForm({...emailForm, content: e.target.value})}
+              placeholder="Contenu de votre message..."
+              rows={6}
+            />
+          </div>
+          <Button onClick={handleSendEmail} className="w-full">
+            <Mail className="h-4 w-4 mr-2" />
+            Envoyer l'email
+          </Button>
         </div>
-        
-        {hasNotificationPermission && (
-          <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Send className="h-4 w-4 mr-2" />
-                Nouvel Email
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-lg">
-              <DialogHeader>
-                <DialogTitle>Envoyer un email</DialogTitle>
-              </DialogHeader>
-              <div className="space-y-4">
-                <div>
-                  <Label htmlFor="recipient">Destinataire</Label>
-                  <Input
-                    id="recipient"
-                    type="email"
-                    value={emailForm.recipient}
-                    onChange={(e) => setEmailForm({...emailForm, recipient: e.target.value})}
-                    placeholder="email@example.com"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="subject">Sujet</Label>
-                  <Input
-                    id="subject"
-                    value={emailForm.subject}
-                    onChange={(e) => setEmailForm({...emailForm, subject: e.target.value})}
-                    placeholder="Objet de l'email"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="content">Message</Label>
-                  <Textarea
-                    id="content"
-                    value={emailForm.content}
-                    onChange={(e) => setEmailForm({...emailForm, content: e.target.value})}
-                    placeholder="Contenu de votre message..."
-                    rows={6}
-                  />
-                </div>
-                <Button onClick={handleSendEmail} className="w-full">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Envoyer l'email
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
-        )}
-      </div>
+      </DialogContent>
+    </Dialog>
+  ) : null;
+
+  return (
+    <DashboardLayout 
+      title="Communications"
+      subtitle="Envoyez des emails et gérez les communications"
+      headerActions={headerActions}
+    >
 
       {/* Filters */}
       <Card>
@@ -276,7 +275,7 @@ export default function AdminCommunications() {
             </div>
           )}
         </CardContent>
-      </Card>
-    </div>
+        </Card>
+    </DashboardLayout>
   );
 }

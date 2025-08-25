@@ -5,8 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Navigation } from '@/components/Navigation';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
@@ -197,23 +196,8 @@ export default function AdminSpectacles() {
     return <div>Accès non autorisé</div>;
   }
 
-  return (
-    <div className="min-h-screen bg-background flex">
-      <Navigation />
-      
-      <main className="flex-1 p-6">
-        <Breadcrumbs />
-        
-        <div className="max-w-6xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
-            <div>
-              <h1 className="text-4xl font-bold text-primary mb-2">Gestion des Spectacles</h1>
-              <p className="text-muted-foreground">
-                Créer et gérer les spectacles EDJS
-              </p>
-            </div>
-            
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+  const headerActions = (
+    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button onClick={resetForm}>
                   <Plus className="h-4 w-4 mr-2" />
@@ -327,104 +311,18 @@ export default function AdminSpectacles() {
                 </form>
               </DialogContent>
             </Dialog>
-          </div>
+  );
 
-          {/* Search */}
-          <Card className="mb-6">
-            <CardContent className="pt-6">
-              <div className="flex items-center space-x-2">
-                <Search className="h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder="Rechercher un spectacle..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="max-w-sm"
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Spectacles Table */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Spectacles ({filteredSpectacles.length})</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {loading ? (
-                <div className="text-center py-4">Chargement...</div>
-              ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Titre</TableHead>
-                      <TableHead>Niveaux/Âges</TableHead>
-                      <TableHead>Durée</TableHead>
-                      <TableHead>Prix</TableHead>
-                      <TableHead>Statut</TableHead>
-                      <TableHead>Actions</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {filteredSpectacles.map((spectacle) => (
-                      <TableRow key={spectacle.id}>
-                        <TableCell>
-                          <div>
-                            <div className="font-medium">{spectacle.title}</div>
-                            {spectacle.description && (
-                              <div className="text-sm text-muted-foreground truncate max-w-xs">
-                                {spectacle.description}
-                              </div>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="space-y-1">
-                            {spectacle.level_range && (
-                              <Badge variant="outline">{spectacle.level_range}</Badge>
-                            )}
-                            {spectacle.age_range_min && spectacle.age_range_max && (
-                              <Badge variant="secondary">
-                                {spectacle.age_range_min}-{spectacle.age_range_max} ans
-                              </Badge>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {spectacle.duration_minutes ? `${spectacle.duration_minutes} min` : '-'}
-                        </TableCell>
-                        <TableCell>{spectacle.price} MAD</TableCell>
-                        <TableCell>
-                          <Badge variant={spectacle.is_active ? "default" : "secondary"}>
-                            {spectacle.is_active ? 'Actif' : 'Inactif'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex space-x-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleEdit(spectacle)}
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleDelete(spectacle.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-    </div>
+  return (
+    <DashboardLayout 
+      title="Gestion des Spectacles"
+      subtitle="Créer et gérer les spectacles EDJS"
+      headerActions={headerActions}
+    >
+      {/* Search */}
+      <Card className="mb-6">
+...
+      </Card>
+    </DashboardLayout>
   );
 }

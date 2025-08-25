@@ -6,8 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Breadcrumbs } from '@/components/Breadcrumbs';
-import { Navigation } from '@/components/Navigation';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { useToast } from '@/hooks/use-toast';
 import { Download, Search, Users, Calendar, MapPin } from 'lucide-react';
 
@@ -51,10 +50,6 @@ export default function AdminBookings() {
   const [typeFilter, setTypeFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
 
-  const breadcrumbItems = [
-    { label: 'Administration', href: '/admin' },
-    { label: 'Réservations', href: '/admin/bookings' }
-  ];
 
   useEffect(() => {
     fetchBookings();
@@ -211,23 +206,24 @@ export default function AdminBookings() {
     }
   };
 
+  const headerActions = (
+    <Button onClick={exportToCSV} variant="outline">
+      <Download className="h-4 w-4 mr-2" />
+      Exporter CSV
+    </Button>
+  );
+
   return (
-    <div className="min-h-screen bg-background">
-      <Navigation />
-      <div className="container mx-auto p-6">
-        <Breadcrumbs />
-        
-        <Card>
+    <DashboardLayout 
+      title="Gestion des réservations"
+      subtitle="Gérer toutes les réservations de la plateforme"
+      headerActions={headerActions}
+    >
+      <Card>
           <CardHeader>
-            <CardTitle className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Gestion des réservations
-              </div>
-              <Button onClick={exportToCSV} variant="outline">
-                <Download className="h-4 w-4 mr-2" />
-                Exporter CSV
-              </Button>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="h-5 w-5" />
+              Réservations ({filteredBookings.length})
             </CardTitle>
             
             <div className="flex gap-4 flex-wrap">
@@ -383,7 +379,6 @@ export default function AdminBookings() {
             )}
           </CardContent>
         </Card>
-      </div>
-    </div>
+    </DashboardLayout>
   );
 }

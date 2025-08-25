@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { StatsCard } from '@/components/StatsCard';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { 
@@ -207,33 +208,33 @@ export default function AdminStatistics() {
     );
   }
 
+  const headerActions = (
+    <div className="flex gap-2">
+      <Select value={timeRange} onValueChange={setTimeRange}>
+        <SelectTrigger className="w-40">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="7d">7 derniers jours</SelectItem>
+          <SelectItem value="30d">30 derniers jours</SelectItem>
+          <SelectItem value="90d">90 derniers jours</SelectItem>
+          <SelectItem value="1y">Cette année</SelectItem>
+        </SelectContent>
+      </Select>
+      
+      <Button onClick={exportData} variant="outline">
+        <Download className="h-4 w-4 mr-2" />
+        Exporter
+      </Button>
+    </div>
+  );
+
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Statistiques avancées</h1>
-          <p className="text-muted-foreground">Analysez les performances de votre plateforme</p>
-        </div>
-        
-        <div className="flex gap-2">
-          <Select value={timeRange} onValueChange={setTimeRange}>
-            <SelectTrigger className="w-40">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="7d">7 derniers jours</SelectItem>
-              <SelectItem value="30d">30 derniers jours</SelectItem>
-              <SelectItem value="90d">90 derniers jours</SelectItem>
-              <SelectItem value="1y">1 an</SelectItem>
-            </SelectContent>
-          </Select>
-          
-          <Button onClick={exportData}>
-            <Download className="h-4 w-4 mr-2" />
-            Exporter
-          </Button>
-        </div>
-      </div>
+    <DashboardLayout 
+      title="Statistiques Avancées"
+      subtitle="Analytics et métriques de performance"
+      headerActions={headerActions}
+    >
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -362,6 +363,6 @@ export default function AdminStatistics() {
           </CardContent>
         </Card>
       </div>
-    </div>
+    </DashboardLayout>
   );
 }

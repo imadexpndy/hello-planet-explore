@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { toast } from 'sonner';
 import { Settings, Save, RefreshCw, Database, Mail, Shield } from 'lucide-react';
 
@@ -78,19 +79,25 @@ export default function AdminSettings() {
     }
   };
 
+  const headerActions = (
+    <div className="flex gap-2">
+      <Button onClick={handleClearCache} variant="outline" disabled={loading}>
+        <RefreshCw className="h-4 w-4 mr-2" />
+        Vider le cache
+      </Button>
+      <Button onClick={handleSaveSettings} disabled={loading}>
+        <Save className="h-4 w-4 mr-2" />
+        Sauvegarder
+      </Button>
+    </div>
+  );
+
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Paramètres Système</h1>
-          <p className="text-muted-foreground">Configurez les paramètres globaux de la plateforme</p>
-        </div>
-        
-        <Button onClick={handleSaveSettings} disabled={loading}>
-          <Save className="h-4 w-4 mr-2" />
-          Sauvegarder
-        </Button>
-      </div>
+    <DashboardLayout 
+      title="Paramètres Système"
+      subtitle="Configuration générale de la plateforme"
+      headerActions={headerActions}
+    >
 
       {/* Platform Settings */}
       <Card>
@@ -293,7 +300,7 @@ export default function AdminSettings() {
             </Button>
           </div>
         </CardContent>
-      </Card>
-    </div>
+        </Card>
+    </DashboardLayout>
   );
 }

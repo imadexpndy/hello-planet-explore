@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { DashboardLayout } from '@/components/DashboardLayout';
 import { Shield, Search, Download, Filter, Eye } from 'lucide-react';
 
 export default function AdminAudit() {
@@ -136,19 +137,19 @@ export default function AdminAudit() {
     );
   }
 
+  const headerActions = (
+    <Button onClick={exportLogs} variant="outline">
+      <Download className="h-4 w-4 mr-2" />
+      Exporter CSV
+    </Button>
+  );
+
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Audit & Logs</h1>
-          <p className="text-muted-foreground">Surveillez toutes les activités de la plateforme</p>
-        </div>
-        
-        <Button onClick={exportLogs}>
-          <Download className="h-4 w-4 mr-2" />
-          Exporter CSV
-        </Button>
-      </div>
+    <DashboardLayout 
+      title="Audit & Logs"
+      subtitle="Surveillez l'activité de la plateforme"
+      headerActions={headerActions}
+    >
 
       {/* Filters */}
       <Card>
@@ -282,6 +283,6 @@ export default function AdminAudit() {
           )}
         </CardContent>
       </Card>
-    </div>
+    </DashboardLayout>
   );
 }
